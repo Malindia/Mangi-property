@@ -1,0 +1,87 @@
+body {
+    font-family: 'Times New Roman', Times, serif;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+.navbar {
+ font-family: 'Times New Roman', Times, serif;
+ background-color: #405247;
+ color: #fff;
+ padding: 20px 0;
+}
+   
+.container {
+ max-width: 1200px;
+ margin: auto;
+ padding: 0 20px;
+}
+.logo {
+    margin: 1%;
+    width: 80px;
+    cursor: pointer;
+}
+   
+.navbar-links a {
+ color: #fff;
+ text-decoration: none;
+ margin-left: 100px;
+ font-size: 16px;
+ font-family: 'Times New Roman', Times, serif;
+}
+
+@media (max-width: 768px) {
+       .nav-list {
+           flex-direction: column;
+           gap: 10px;
+       }
+       
+       .navbar {
+           flex-direction: column;
+       }
+    .l ogo {
+        margin: 1%;
+        width: 40px;
+        cursor: pointer;
+    }
+   }
+   
+   /* Hero Section */
+.property-section {
+    margin-bottom: 40px;
+}
+
+.property-section h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.property-list {
+    display: inline-table;
+
+}
+
+.property-item {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.property-item img {
+    width: 100%;
+    height: 100px; /* Adjust height as needed */
+    object-fit: cover; /* Ensures the image covers the area nicely */
+}
+
+.property-item h3, .property-item p {
+    padding: 10px;
+    color: #666;
+}
+
+/* Adjust to 4 columns for wider screens */
+@media (min-width: 768px) {
+    .property-list {
+        grid-template-columns: repeat(4, 1fr); /* 4 columns on wider screens */
+    }
+}
