@@ -37,6 +37,7 @@ body, html {
     font-size: 16px;
     font-family: 'Times New Roman', Times, serif;
 }
+
 @media (max-width: 768px) {
     .logo {    
         margin: 1%;
@@ -52,6 +53,7 @@ body, html {
     .navbar {
         flex-direction: column;
     }
+   
 }
 
 /* Hero Section */
@@ -215,7 +217,10 @@ body, html {
     font-family: 'Times New Roman', Times, serif;
     margin-bottom: 15px;
 }
-
+.contact-section p {
+    font-family: 'Times New Roman', Times, serif;
+    
+}
 .contact-options a {
     display: inline-block;
     margin: 10px;
@@ -226,6 +231,7 @@ body, html {
     border-radius: 5px;
     text-decoration: none;
 }
+p
 
 .whatsapp-link {
     background-color: #25D366;
