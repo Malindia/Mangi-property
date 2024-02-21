@@ -1,50 +1,57 @@
 body {
-  font-family: 'Times New Roman', Times, serif;
+    font-family: 'Arial', sans-serif;
     background-color: #19221d;
     padding: 20px;
+    color: #fff;
+    /* Ensure text readability */
 }
+
 .navbar {
- background-color: #405247;
- color: #fff;
- padding: 20px 0;
+    background-color: #405247;
+    color: #fff;
+    padding: 20px 0;
 }
-   
+
 .container {
- max-width: 1200px;
- margin: auto;
- padding: 0 20px;
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
 }
+
 .logo {
-    margin: 1%;
     width: 80px;
     cursor: pointer;
 }
+
 .navbar-links a {
-   
- color: #fff;
- text-decoration: none;
- margin-left: 100px;
- font-size: 16px;
+    color: #fff;
+    text-decoration: none;
+    margin-left: 20px;
+    /* Adjusted for better spacing */
+    font-size: 16px;
 }
+
 @media (max-width: 768px) {
- .nav-list {
- flex-direction: column;
- gap: 10px;
- }
-       
- .navbar {
- flex-direction: column;
- }
- .logo {
-    margin: 1%;
-    width: 40px;
-    cursor: pointer;
-  }
+    .navbar-links a {
+        margin-left: 0;
+        display: block;
+        /* Stack nav items under each other */
+        margin-bottom: 10px;
+    }
+
+    .logo {
+        margin: auto;
+        /* Center logo on smaller screens */
+        display: block;
+        width: 60px;
+        /* Adjusted size */
+    }
 }
-   
-/* Hero Section */
+
 form {
     background: #ffffff;
+    color: #333;
+    /* For form text */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -53,58 +60,40 @@ form {
 }
 
 h2 {
-    font-family: 'Times New Roman', Times, serif;
-    text-align: center;
-    margin-bottom: 20px;
+    color: #405247;
+    /* Match the navbar color */
 }
 
 label {
-    margin-top: 15px;
     display: block;
-    font-weight: bold;
+    margin-top: 15px;
+    color: #333;
+    /* Ensure label readability */
 }
 
+input[type="text"],
 input[type="date"],
 input[type="number"],
-select {
+input[type="tel"],
+input[type="email"],
+select,
+button {
     width: 100%;
-    padding: 8px;
+    padding: 10px;
     margin-top: 5px;
     border-radius: 4px;
     border: 1px solid #ccc;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 
 button {
-    width: 100%;
-    background-color: #9fa7b0;
+    background-color: #405247;
+    /* Match navbar color */
     color: white;
-    padding: 10px;
     margin-top: 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    font-family: 'Times New Roman', Times, serif;
 }
 
 button:hover {
     background-color: #25382e;
-}
-
-/* Custom styles for scrollbars in the form */
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #888;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    /* Darker shade for hover effect */
 }

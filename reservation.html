@@ -5,18 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reservation Form</title>
     <link rel="stylesheet" href="reservation.css" />
-    <!-- Ensure you link to your CSS file -->
   </head>
   <body>
     <nav class="navbar">
       <div class="container">
-        <img src="images/mangilogo.jpg" class="logo" />
+        <img src="images/mangilogo.jpg" class="logo" alt="Company Logo" />
         <div class="navbar-links">
           <a href="home.html">Home</a>
-          <a href="home.html">About</a>
+          <a href="about.html">About</a>
           <a href="reservation.html">Reservations</a>
           <a href="rental.html">Property Listings</a>
-          <a href="home.html">Contact</a>
+          <a href="contact.html">Contact</a>
         </div>
       </div>
     </nav>
@@ -27,13 +26,14 @@
     >
       <h2>Travel Reservation Form</h2>
       <label for="name">Full Name:</label>
-      <input type="text" id="name" name="name" min="1" required />
+      <input type="text" id="name" name="name" required />
 
       <label for="travelDate">Travel Date:</label>
       <input type="date" id="travelDate" name="travelDate" required />
 
       <label for="city">Select City:</label>
       <select id="city" name="city" required>
+        <option value="">Please Select</option>
         <option value="Malindi">Malindi</option>
         <option value="Watamu">Watamu</option>
         <option value="Mombasa">Mombasa</option>
@@ -49,12 +49,14 @@
       <input type="number" id="rooms" name="rooms" min="1" required />
 
       <label for="telephone">Telephone:</label>
-      <input type="tel" id="telephone" name="telephone" min="1" required />
+      <input type="tel" id="telephone" name="telephone" required />
+
       <label for="email">Email:</label>
-      <input type="email" id="email" name="email" min="1" required />
+      <input type="email" id="email" name="email" required />
 
       <label for="houseType">House Selected:</label>
       <select id="houseType" name="houseType" required>
+        <option value="">Please Select</option>
         <option value="Sea View Villa">Sea View Villa</option>
         <option value="Town Apartment">Town Apartment</option>
         <option value="Studio Apartment">Studio Apartment</option>
@@ -63,6 +65,5 @@
       <button type="submit">Submit Reservation</button>
     </form>
     <script src="reservation.js"></script>
-    <!--JavaScript file for any client-side logic -->
   </body>
 </html>
