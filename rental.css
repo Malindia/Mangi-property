@@ -1,68 +1,99 @@
-
-   /* Hero Section */
 .property-section {
-    margin-bottom: 40px;
+    margin: 40px 20px;
 }
 
 .property-section h2 {
     color: #333;
     margin-bottom: 20px;
+    text-align: center;
 }
 
+/* Correcting the property-list grid setup */
 .property-list {
-    display: inline-table;
-
+    display: grid;
+    /* Sets up a 4-column layout for screens wider than 1024px */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
 }
 
 .property-item {
     background-color: #ffffff;
-    border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.property-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .property-item img {
     width: 100%;
-    height: 100px; /* Adjust height as needed */
-    object-fit: cover; /* Ensures the image covers the area nicely */
+    height: auto;
+    object-fit: cover;
 }
 
-.property-item h3, .property-item p {
+.property-item h3,
+.property-item p {
     padding: 10px;
     color: #666;
+    text-align: center;
 }
 
-/* Adjust to 4 columns for wider screens */
-@media (min-width: 768px) {
+/* Responsive adjustments */
+@media (max-width: 1024px) {
     .property-list {
-        grid-template-columns: repeat(4, 1fr); /* 4 columns on wider screens */
+        /* 3 columns for devices narrower than 1024px */
+        grid-template-columns: repeat(3, 1fr);
     }
 }
-/* The Modal (background) */
+
+@media (max-width: 768px) {
+    .property-list {
+        /* 2 columns for devices narrower than 768px */
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .property-list {
+        /* 1 column for devices narrower than 480px */
+        grid-template-columns: 1fr;
+    }
+}
+/* Modal Styles */
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    display: none;
+    position: fixed;
+    z-index: 10;
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Semi-transparent background */
 }
 
-/* Modal Content */
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 5% auto;
+    /* Centered with margin from the top */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: 80%;
+    /* Responsive width */
+    max-width: 500px;
+    /* Maximum width to ensure readability */
+    border-radius: 8px;
+    /* Rounded corners for modern aesthetic */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Adds depth */
 }
 
-/* The Close Button */
 .close-button {
     color: #aaa;
     float: right;
