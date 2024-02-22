@@ -1,12 +1,17 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Assuming each property item has a class 'property-item'
+document.addEventListener('DOMContentLoaded', function () {
+    // Select all property items
     var propertyItems = document.querySelectorAll('.property-item');
 
-    propertyItems.forEach(function(item) {
-        item.addEventListener('click', function() {
-            // Here you should fetch or define the images and descriptions for each property
-            var imagesHtml = '<img src="your-image-source.jpg" alt="Property Image">';
-            var descriptionText = 'This is a detailed description of the property.';
+    propertyItems.forEach(function (item) {
+        item.addEventListener('click', function () {
+            // Fetch the image source, title, and price of the clicked property
+            var imageSrc = item.querySelector('img').src;
+            var titleText = item.querySelector('h3').textContent;
+            var priceText = item.querySelector('p').textContent;
+
+            // Define the images and descriptions for the clicked property
+            var imagesHtml = '<img src="' + imageSrc + '" alt="Property Image" style="width: 100%; height: auto;">';
+            var descriptionText = titleText + ' - ' + priceText;
 
             // Set the content of the modal
             document.getElementById('modalImages').innerHTML = imagesHtml;
@@ -17,8 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // When the user clicks on <span> (x), close the modal
-    document.querySelector('.close-button').addEventListener('click', function() {
+    // Close the modal when the user clicks on <span> (x)
+    document.querySelector('.close-button').addEventListener('click', function () {
         document.getElementById('propertyModal').style.display = 'none';
     });
 });
