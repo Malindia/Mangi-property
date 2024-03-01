@@ -1,13 +1,74 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
+const fileUpload = require("express-fileupload");
+const StormDB = require("stormdb");
+const cors = require("cors"); // Import CORS module
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Initialize StormDB
+const engine = new StormDB.localFileEngine("./db.stormdb");
+const db = new StormDB(engine);
+db.default({ properties: [] });
+
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json()); // Add this to parse JSON bodies
+app.use(fileUpload());
+app.use(cors())
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Property Management Endpoints
+
+// Add property
+app.post("/api/properties", (req, res) => {
+  const { name, location, description } = req.body;
+  const files = req.files;
+  if (!files || Object.keys(files).length === 0) {
+    return res.status(400).send('No files were uploaded.');
+  }
+  const image = files.image;
+  const imagePath = `uploads/${Date.now()}_${image.name}`; // Prevent name conflicts
+  image.mv(imagePath, err => {
+    if (err) return res.status(500).send(err);
+    const property = { id: Date.now(), name, location, description, imagePath };
+    db.get("properties").push(property).save();
+    res.send({ message: "Property added successfully", propertyId: property.id, imagePath: `http://${req.headers.host}/${imagePath}` });
+  });
+});
+
+// Get properties
+app.get("/api/properties", (req, res) => {
+  const properties = db.get("properties").value().map(p => ({
+    ...p,
+    imagePath: `http://${req.headers.host}/${p.imagePath}`
+  }));
+  res.send(properties);
+});
+
+// Edit property
+app.put("/api/properties/:id", (req, res) => {
+  const { id } = req.params;
+  const { name, location, description } = req.body;
+  const properties = db.get("properties");
+  const index = properties.value().findIndex(p => p.id.toString() === id);
+  if (index === -1) return res.status(404).send("Property not found.");
+  properties.get(index).assign({ name, location, description }).save();
+  res.send("Property updated successfully.");
+});
+
+// Delete property
+app.delete("/api/properties/:id", (req, res) => {
+  const { id } = req.params;
+  const properties = db.get("properties");
+  const index = properties.value().findIndex(p => p.id.toString() === id);
+  if (index === -1) return res.status(404).send("Property not found.");
+  properties.get(index).delete().save();
+  res.send("Property deleted successfully.");
+});
 // Handle form submission
 app.post("/api/submit", (req, res) => {
   console.log(req.body);
