@@ -1,9 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const nodemailer = require("nodemailer");
 const fileUpload = require("express-fileupload");
 const StormDB = require("stormdb");
-const cors = require("cors"); // Import CORS module
+const cors = require("cors");
 const path = require('path');
 
 const app = express();
@@ -16,59 +15,121 @@ db.default({ properties: [] });
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json()); // Add this to parse JSON bodies
+app.use(bodyParser.json());
 app.use(fileUpload());
-app.use(cors())
+app.use(cors());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Property Management Endpoints
+// Utility function to update image path for outgoing responses
+const updateImagePath = (property, req) => {
+  if (!property || !property.imagePath) return property;
+  return {
+    ...property,
+    imagePath: `http://${req.headers.host}/${property.imagePath}`
+  };
+};
 
 // Add property
-app.post("/api/properties", (req, res) => {
+app.post("/api/properties", async (req, res) => {
   const { name, location, description } = req.body;
   const files = req.files;
-  if (!files || Object.keys(files).length === 0) {
-    return res.status(400).send('No files were uploaded.');
+
+  if (!files || Object.keys(files).length === 0 || !files.image) {
+    return res.status(400).send('No image file was uploaded.');
   }
+
   const image = files.image;
-  const imagePath = `uploads/${Date.now()}_${image.name}`; // Prevent name conflicts
+  const imagePath = `uploads/${Date.now()}_${image.name}`;
+
   image.mv(imagePath, err => {
-    if (err) return res.status(500).send(err);
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Failed to upload the image.');
+    }
+
+    if (!name || !location || !description) {
+      return res.status(400).send('Missing required property fields.');
+    }
+
     const property = { id: Date.now(), name, location, description, imagePath };
-    db.get("properties").push(property).save();
-    res.send({ message: "Property added successfully", propertyId: property.id, imagePath: `http://${req.headers.host}/${imagePath}` });
+    db.get("properties").push(property);
+    db.save();
+
+    res.send({
+      message: "Property added successfully",
+      property: updateImagePath(property, req)
+    });
   });
 });
 
 // Get properties
 app.get("/api/properties", (req, res) => {
-  const properties = db.get("properties").value().map(p => ({
-    ...p,
-    imagePath: `http://${req.headers.host}/${p.imagePath}`
-  }));
+  const properties = db.get("properties").value().map(property => updateImagePath(property, req));
+  if (!properties) {
+    return res.status(500).send('Failed to fetch properties.');
+  }
   res.send(properties);
+});
+// Fetch a single property by ID
+app.get("/api/properties/:id", (req, res) => {
+  const { id } = req.params; // Extracting ID from request parameters
+  const properties = db.get("properties").value(); // Fetch all properties
+  const property = properties.find(p => p.id.toString() === id); // Find the property by ID
+
+  if (!property) {
+    return res.status(404).send("Property not found."); // Property not found response
+  }
+
+  // Send the found property with updated image path
+  res.send(updateImagePath(property, req));
 });
 
 // Edit property
 app.put("/api/properties/:id", (req, res) => {
+  console.log("---------------------->", req.params)
   const { id } = req.params;
-  const { name, location, description } = req.body;
-  const properties = db.get("properties");
-  const index = properties.value().findIndex(p => p.id.toString() === id);
-  if (index === -1) return res.status(404).send("Property not found.");
-  properties.get(index).assign({ name, location, description }).save();
-  res.send("Property updated successfully.");
+  const updates = req.body;
+
+  const properties = db.get("properties").value();
+  const propertyIndex = properties.findIndex(p => p.id.toString() === id);
+
+  if (propertyIndex === -1) {
+    return res.status(404).send("Property not found.");
+  }
+
+  // Additional null checks for updates
+  if (!updates || Object.keys(updates).length === 0) {
+    return res.status(400).send("No updates provided.");
+  }
+
+  const updatedProperty = { ...properties[propertyIndex], ...updates };
+  db.get("properties").get(propertyIndex).set(updatedProperty);
+  db.save();
+
+  res.send({
+    message: "Property updated successfully.",
+    property: updateImagePath(updatedProperty, req)
+  });
 });
 
 // Delete property
 app.delete("/api/properties/:id", (req, res) => {
   const { id } = req.params;
-  const properties = db.get("properties");
-  const index = properties.value().findIndex(p => p.id.toString() === id);
-  if (index === -1) return res.status(404).send("Property not found.");
-  properties.get(index).delete().save();
-  res.send("Property deleted successfully.");
+  const initialLength = db.get("properties").value().length;
+
+  db.get("properties").set(db.get("properties").value().filter(p => p.id.toString() !== id));
+  db.save();
+
+  const newLength = db.get("properties").value().length;
+
+  if (newLength === initialLength) {
+    return res.status(404).send("Property not found.");
+  }
+
+  res.send({ message: "Property deleted successfully." });
 });
+
+
 // Handle form submission
 app.post("/api/submit", (req, res) => {
   console.log(req.body);
