@@ -29,9 +29,10 @@ const updateImagePath = (property, req) => {
   };
 };
 
-// Add property
+
+// Add property with new fields
 app.post("/api/properties", async (req, res) => {
-  const { name, location, description } = req.body;
+  const { name, location, description, price, bedrooms, bathrooms, propertyType } = req.body;
   const files = req.files;
 
   if (!files || Object.keys(files).length === 0 || !files.image) {
@@ -41,25 +42,28 @@ app.post("/api/properties", async (req, res) => {
   const image = files.image;
   const imagePath = `uploads/${Date.now()}_${image.name}`;
 
-  image.mv(imagePath, err => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send('Failed to upload the image.');
-    }
-
-    if (!name || !location || !description) {
-      return res.status(400).send('Missing required property fields.');
-    }
-
-    const property = { id: Date.now(), name, location, description, imagePath };
-    db.get("properties").push(property);
-    db.save();
-
+  try {
+    await image.mv(imagePath);
+    const property = {
+      id: Date.now(),
+      name,
+      location,
+      description,
+      price,
+      bedrooms,
+      bathrooms,
+      propertyType,
+      imagePath
+    };
+    db.get("properties").push(property).save();
     res.send({
       message: "Property added successfully",
       property: updateImagePath(property, req)
     });
-  });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send('Failed to upload the image.');
+  }
 });
 
 // Get properties
@@ -85,9 +89,11 @@ app.get("/api/properties/:id", (req, res) => {
 });
 
 // Edit property
+
+// Edit property with new fields and image handling
 app.put("/api/properties/:id", async (req, res) => {
   const { id } = req.params;
-  let updates = req.body;
+  let updates = { ...req.body };
 
   const properties = db.get("properties").value();
   const propertyIndex = properties.findIndex(p => p.id.toString() === id);
@@ -99,25 +105,23 @@ app.put("/api/properties/:id", async (req, res) => {
   const files = req.files;
   let imagePath = properties[propertyIndex].imagePath;
 
-  // Handle image update or deletion
   if (files && files.image) {
     const image = files.image;
     imagePath = `uploads/${Date.now()}_${image.name}`;
     await image.mv(imagePath);
     updates = { ...updates, imagePath };
   } else if (updates.deleteImage === 'true') {
-    // Delete the current image file if it exists
-    if (fs.existsSync(properties[propertyIndex].imagePath)) {
-      fs.unlinkSync(properties[propertyIndex].imagePath);
+    // Attempt to delete the current image file if it exists
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath);
     }
-    imagePath = null; // Clear imagePath in the property
-    updates = { ...updates, imagePath };
+    imagePath = ""; // Clear imagePath in the property
+    updates = { ...updates, imagePath: "" };
     delete updates.deleteImage; // Remove deleteImage flag from updates
   }
 
   const updatedProperty = { ...properties[propertyIndex], ...updates };
-  db.get("properties").get(propertyIndex).set(updatedProperty);
-  db.save();
+  db.get("properties").get(propertyIndex).set(updatedProperty).save();
 
   res.send({
     message: "Property updated successfully.",
