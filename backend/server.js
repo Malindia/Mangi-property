@@ -85,10 +85,9 @@ app.get("/api/properties/:id", (req, res) => {
 });
 
 // Edit property
-app.put("/api/properties/:id", (req, res) => {
-  console.log("---------------------->", req.params)
+app.put("/api/properties/:id", async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;
+  let updates = req.body;
 
   const properties = db.get("properties").value();
   const propertyIndex = properties.findIndex(p => p.id.toString() === id);
@@ -97,9 +96,23 @@ app.put("/api/properties/:id", (req, res) => {
     return res.status(404).send("Property not found.");
   }
 
-  // Additional null checks for updates
-  if (!updates || Object.keys(updates).length === 0) {
-    return res.status(400).send("No updates provided.");
+  const files = req.files;
+  let imagePath = properties[propertyIndex].imagePath;
+
+  // Handle image update or deletion
+  if (files && files.image) {
+    const image = files.image;
+    imagePath = `uploads/${Date.now()}_${image.name}`;
+    await image.mv(imagePath);
+    updates = { ...updates, imagePath };
+  } else if (updates.deleteImage === 'true') {
+    // Delete the current image file if it exists
+    if (fs.existsSync(properties[propertyIndex].imagePath)) {
+      fs.unlinkSync(properties[propertyIndex].imagePath);
+    }
+    imagePath = null; // Clear imagePath in the property
+    updates = { ...updates, imagePath };
+    delete updates.deleteImage; // Remove deleteImage flag from updates
   }
 
   const updatedProperty = { ...properties[propertyIndex], ...updates };

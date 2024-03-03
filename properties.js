@@ -1,8 +1,9 @@
 const API_URL = "http://192.168.100.3:3000/api/properties";
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('addPropertyBtn').addEventListener('click', openForm);
+    document.getElementById('addPropertyBtn').addEventListener('click', () => openForm());
     document.getElementById('propertyFormInner').addEventListener('submit', submitPropertyForm);
+    document.getElementById('deleteImageBtn').addEventListener('click', deleteImage);
     fetchProperties();
 });
 
@@ -18,6 +19,7 @@ function closeForm() {
 function clearFormFields() {
     document.getElementById('propertyFormInner').reset();
     document.getElementById('propertyId').value = '';
+    document.getElementById('imagePreview').style.display = 'none';
 }
 
 async function submitPropertyForm(event) {
@@ -31,12 +33,12 @@ async function submitPropertyForm(event) {
             method: propertyId ? 'PUT' : 'POST',
             body: formData,
         });
-        const result = await response.json();
         if (response.ok) {
             alert('Property saved successfully!');
             closeForm();
             fetchProperties();
         } else {
+            const result = await response.json();
             throw new Error(result.message);
         }
     } catch (error) {
@@ -59,14 +61,16 @@ async function fetchProperties() {
 function displayProperties(properties) {
     const display = document.getElementById('propertiesDisplay');
     display.innerHTML = properties.map(property => `
-        <div class="property-item">
-            <h3>${property.name}</h3>
-            <p>Location: ${property.location}</p>
-            <p>Description: ${property.description}</p>
-            <img src="${property.imagePath}" alt="${property.name}" style="width:100px;">
-            <button onclick="editProperty('${property.id}')">Edit</button>
-            <button onclick="deleteProperty('${property.id}')">Delete</button>
-        </div>
+        <tr>
+            <td>${property.name}</td>
+            <td>${property.location}</td>
+            <td>${property.description}</td>
+            <td><img src="${property.imagePath}" alt="Property Image" style="width:100px; height: auto;"></td>
+            <td>
+                <button class="btn" onclick="editProperty('${property.id}')"><i class="fas fa-edit"></i>Edit</button>
+                <button class="btn" onclick="deleteProperty('${property.id}')"><i class="fas fa-trash-alt"></i>Delete</button>
+            </td>
+        </tr>
     `).join('');
 }
 
@@ -118,3 +122,4 @@ async function deleteProperty(id) {
         alert(`Error: ${error.message}`);
     }
 }
+fetchProperties()

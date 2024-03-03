@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Property Management Application</title>
+    <title>Real Estate Management</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
@@ -12,32 +12,59 @@
   </head>
   <body>
     <div id="app">
-      <h1>Property Management</h1>
-      <button id="addPropertyBtn">
-        <i class="fas fa-plus"></i> Add Property
-      </button>
+      <header>
+        <h1>Real Estate Management</h1>
+        <button id="addPropertyBtn" class="btn btn-add">
+          <i class="fas fa-plus"></i> Add Property
+        </button>
+      </header>
       <div id="propertyForm" class="modal">
-        <!-- Form for adding/editing properties -->
-        <form id="propertyFormInner">
+        <form id="propertyFormInner" class="form">
           <input type="hidden" id="propertyId" />
-          <label for="name">Name:</label>
-          <input type="text" id="name" name="name" required />
-          <label for="location">Location:</label>
-          <input type="text" id="location" name="location" required />
-          <label for="description">Description:</label>
-          <textarea id="description" name="description" required></textarea>
-          <label for="image">Image:</label>
-          <input type="file" id="image" name="image" required />
+          <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+          <div class="form-group">
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" required />
+          </div>
+          <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="image">Image:</label>
+            <input type="file" id="image" name="image" />
+          </div>
+          <div class="form-group image-preview" id="imagePreviewContainer">
+            <img
+              id="imagePreview"
+              src=""
+              alt="Preview"
+              style="max-width: 100%; height: auto; display: none"
+            />
+          </div>
           <div class="form-actions">
-            <button type="submit" class="submit-btn">Submit</button>
-            <button type="button" class="cancel-btn" onclick="closeForm()">
+            <button type="submit" class="btn">Submit</button>
+            <button type="button" class="btn btn-cancel" onclick="closeForm()">
               Cancel
             </button>
           </div>
         </form>
       </div>
-      <div id="propertiesDisplay"></div>
-      <!-- Container for displaying properties -->
+      <table id="propertiesTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Description</th>
+            <th>Image</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="propertiesDisplay"></tbody>
+      </table>
     </div>
     <script src="properties.js"></script>
   </body>
