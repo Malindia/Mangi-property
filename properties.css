@@ -57,7 +57,8 @@ header {
 
 input[type="text"],
 input[type="file"],
-textarea {
+textarea,
+select {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
@@ -80,4 +81,22 @@ td {
 
 .image-preview img {
     margin-top: 10px;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+    .modal {
+        width: 95%;
+        max-width: none;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    table {
+        font-size: 12px;
+    }
 }
