@@ -100,3 +100,9 @@ td {
         font-size: 12px;
     }
 }
+
+/* Fix for the image size in the table */
+table img {
+    width: 100px;
+    height: auto;
+}

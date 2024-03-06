@@ -749,6 +749,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addPropertyBtn').addEventListener('click', () => openForm());
     document.getElementById('propertyFormInner').addEventListener('submit', submitPropertyForm);
     fetchProperties();
+
+    // Add event listener to each image in the table
+    const tableImages = document.querySelectorAll('#propertiesTable img');
+    tableImages.forEach(image => {
+        image.addEventListener('click', () => {
+            showImagePopup(image.src);
+        });
+    });
 });
 
 function openForm() {
@@ -891,4 +899,23 @@ function handleLocationInput() {
     } else {
         dropdown.style.display = 'none';
     }
+}
+
+// Function to show image popup
+function showImagePopup(imageSrc) {
+    const popup = document.createElement('div');
+    popup.classList.add('image-popup');
+
+    const image = document.createElement('img');
+    image.src = imageSrc;
+
+    popup.appendChild(image);
+
+    // Append the popup to the body
+    document.body.appendChild(popup);
+
+    // Close the popup when clicking outside the image
+    popup.addEventListener('click', () => {
+        document.body.removeChild(popup);
+    });
 }
