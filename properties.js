@@ -740,7 +740,7 @@ const locations = [
     { town: 'Ngong', county: 'Kajiado' },
     { town: 'Nyahururu', county: 'Laikipia' },
 ]
-const API_URL = "http://192.168.100.3:3000/api/properties";
+const API_URL = "https://mangi-property-xo74.vercel.app/api/properties";
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('location').addEventListener('input', handleLocationInput);
