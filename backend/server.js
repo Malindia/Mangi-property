@@ -6,6 +6,10 @@ const cors = require("cors");
 const path = require('path');
 
 const app = express();
+// Enable CORS for all origins
+app.use(cors({
+  origin: '*'
+}));
 const port = process.env.PORT || 3000;
 
 // Initialize StormDB
@@ -17,7 +21,6 @@ db.default({ properties: [] });
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(fileUpload());
-app.use(cors());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Utility function to update image path for outgoing responses
