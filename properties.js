@@ -742,21 +742,11 @@ const locations = [
 ]
 const API_URL = "http://192.168.100.3:3000/api/properties";
 
-
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('location').addEventListener('input', handleLocationInput);
-
     document.getElementById('addPropertyBtn').addEventListener('click', () => openForm());
     document.getElementById('propertyFormInner').addEventListener('submit', submitPropertyForm);
     fetchProperties();
-
-    // Add event listener to each image in the table
-    const tableImages = document.querySelectorAll('#propertiesTable img');
-    tableImages.forEach(image => {
-        image.addEventListener('click', () => {
-            showImagePopup(image.src);
-        });
-    });
 });
 
 function openForm() {
@@ -814,7 +804,7 @@ function displayProperties(properties) {
     const display = document.getElementById('propertiesDisplay');
     display.innerHTML = properties.map(property => `
         <tr>
-        <td><img src="${property.imagePath || ''}" alt="Property Image" style="width:100px; height: auto;"></td>
+            <td><img src="${property.imagePath || ''}" alt="Property Image" style="width:100px; height: auto; cursor: pointer;" onclick="previewImage('${property.imagePath || ''}')"></td>
             <td>${property.name || '-'}</td>
             <td>${property.location || '-'}</td>
             <td>${property.description || '-'}</td>
@@ -879,15 +869,15 @@ function handleLocationInput() {
     dropdown.innerHTML = '';
 
     // Filter locations based on input
-    const filteredLocations = locations.filter(location => location.toLowerCase().includes(input));
+    const filteredLocations = locations.filter(location => location.town.toLowerCase().includes(input));
 
     // Add filtered options to the dropdown
     filteredLocations.forEach(location => {
         const option = document.createElement('div');
-        option.textContent = location;
+        option.textContent = location.town;
         option.classList.add('dropdown-option');
         option.addEventListener('click', () => {
-            document.getElementById('location').value = location;
+            document.getElementById('location').value = location.town;
             dropdown.innerHTML = '';
         });
         dropdown.appendChild(option);
@@ -901,21 +891,17 @@ function handleLocationInput() {
     }
 }
 
-// Function to show image popup
-function showImagePopup(imageSrc) {
-    const popup = document.createElement('div');
-    popup.classList.add('image-popup');
+function previewImage(imagePath) {
+    const modal = document.getElementById('imagePreviewModal');
+    const modalImg = document.getElementById('modalImage');
+    modal.style.display = 'block';
+    modalImg.src = imagePath;
+}
 
-    const image = document.createElement('img');
-    image.src = imageSrc;
-
-    popup.appendChild(image);
-
-    // Append the popup to the body
-    document.body.appendChild(popup);
-
-    // Close the popup when clicking outside the image
-    popup.addEventListener('click', () => {
-        document.body.removeChild(popup);
-    });
+// Close the modal when clicking outside of the image
+window.onclick = function (event) {
+    const modal = document.getElementById('imagePreviewModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
 }

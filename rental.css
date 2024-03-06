@@ -1,3 +1,105 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body,
+html {
+    font-family: 'Arial', sans-serif;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* Navigation Bar */
+.navbar {
+    background-color: #405247;
+    color: #fff;
+    padding: 20px 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
+}
+
+.logo {
+    margin: 1%;
+    width: 80px;
+    cursor: pointer;
+}
+
+.navbar-links a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 100px;
+    font-size: 16px;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+@media (max-width: 768px) {
+    .logo {
+        margin: 1%;
+        width: 40px;
+        cursor: pointer;
+    }
+
+    .nav-list {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .navbar {
+        flex-direction: column;
+    }
+}
+
+/* Basic Reset and styles already provided by you remain unchanged */
+
+/* Hamburger Menu Button */
+.hamburger {
+    display: none;
+    font-size: 24px;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hamburger {
+        display: block;
+        color: white;
+    }
+
+    .navbar-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+    }
+
+    .navbar-links a {
+        display: block;
+        margin: 10px 0;
+    }
+
+    /* Show Menu */
+    .navbar-links.active {
+        display: flex;
+    }
+}
+
+/* Smooth Transition */
+.navbar-links,
+.navbar-links a {
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+/* Hero Section */
 .property-section {
     margin: 40px 20px;
 }
@@ -8,10 +110,8 @@
     text-align: center;
 }
 
-/* Correcting the property-list grid setup */
 .property-list {
     display: grid;
-    /* Sets up a 4-column layout for screens wider than 1024px */
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
 }
@@ -43,27 +143,24 @@
     text-align: center;
 }
 
-/* Responsive adjustments */
 @media (max-width: 1024px) {
     .property-list {
-        /* 3 columns for devices narrower than 1024px */
         grid-template-columns: repeat(3, 1fr);
     }
 }
 
 @media (max-width: 768px) {
     .property-list {
-        /* 2 columns for devices narrower than 768px */
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 480px) {
     .property-list {
-        /* 1 column for devices narrower than 480px */
         grid-template-columns: 1fr;
     }
 }
+
 /* Modal Styles */
 .modal {
     display: none;
@@ -75,23 +172,17 @@
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
-    /* Semi-transparent background */
 }
 
 .modal-content {
     background-color: #fefefe;
     margin: 5% auto;
-    /* Centered with margin from the top */
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
-    /* Responsive width */
     max-width: 500px;
-    /* Maximum width to ensure readability */
     border-radius: 8px;
-    /* Rounded corners for modern aesthetic */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    /* Adds depth */
 }
 
 .close-button {

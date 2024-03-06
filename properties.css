@@ -1,8 +1,13 @@
 :root {
-    --background-color: #ffffff;
-    --text-color: #000000;
-    --btn-background-color: #000000;
+    --background-color: #f4f4f4;
+    --text-color: #333333;
+    --btn-background-color: #4CAF50;
     --btn-text-color: #ffffff;
+    --btn-hover-color: #45a049;
+    --input-border-color: #dddddd;
+    --input-focus-border-color: #4CAF50;
+    --dropdown-bg-color: #ffffff;
+    --dropdown-border-color: #dddddd;
 }
 
 body {
@@ -26,10 +31,11 @@ header {
     border-radius: 5px;
     cursor: pointer;
     margin-right: 10px;
+    transition: background-color 0.3s;
 }
 
 .btn:hover {
-    opacity: 0.9;
+    background-color: var(--btn-hover-color);
 }
 
 .btn-cancel {
@@ -59,11 +65,20 @@ input[type="text"],
 input[type="file"],
 textarea,
 select {
-    width: 100%;
-    padding: 8px;
+    width: calc(100% - 22px);
+    padding: 10px;
     margin-top: 5px;
     border-radius: 5px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--input-border-color);
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="file"]:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--input-focus-border-color);
+    outline: none;
 }
 
 table {
@@ -75,7 +90,7 @@ table {
 th,
 td {
     text-align: left;
-    padding: 8px;
+    padding: 10px;
     border-bottom: 1px solid #ddd;
 }
 
@@ -83,26 +98,27 @@ td {
     margin-top: 10px;
 }
 
-/* Responsive styles */
-@media screen and (max-width: 768px) {
-    .modal {
-        width: 95%;
-        max-width: none;
-    }
-
-    .btn {
-        display: block;
-        width: 100%;
-        margin-bottom: 10px;
-    }
-
-    table {
-        font-size: 12px;
-    }
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--dropdown-bg-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--dropdown-border-color);
+    border-radius: 5px;
+    z-index: 1000;
+    width: calc(100% - 22px);
 }
 
-/* Fix for the image size in the table */
-table img {
-    width: 100px;
-    height: auto;
+.dropdown-content .dropdown-option {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dropdown-content .dropdown-option:hover {
+    background-color: #f9f9f9;
+}
+
+.dropdown-content.show {
+    display: block;
 }
