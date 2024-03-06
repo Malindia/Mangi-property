@@ -6,10 +6,6 @@ const cors = require("cors");
 const path = require('path');
 
 const app = express();
-// Enable CORS for all origins
-app.use(cors({
-  origin: '*'
-}));
 const port = process.env.PORT || 3000;
 
 // Initialize StormDB
@@ -18,6 +14,7 @@ const db = new StormDB(engine);
 db.default({ properties: [] });
 
 // Middleware
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(fileUpload());
