@@ -6,7 +6,7 @@ const dotenv = require('dotenv'); // Require dotenv
 dotenv.config();
 const fileUpload = require("express-fileupload");
 const firebaseAdmin = require("firebase-admin");
-const serviceAccount = require("./firebase-key.json");
+// const serviceAccount = require("./firebase-key.json");
 const cors = require("cors");
 const path = require('path');
 const { firebaseConfig } = require("./firebase.config");
