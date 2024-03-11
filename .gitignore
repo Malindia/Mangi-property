@@ -2,3 +2,4 @@
 uploads/
 stormdb
 *node_modules/
+firebase-key.json

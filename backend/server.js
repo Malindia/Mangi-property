@@ -1,17 +1,21 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
-const StormDB = require("stormdb");
+const firebaseAdmin = require("firebase-admin");
+const serviceAccount = require("./firebase-key.json");
 const cors = require("cors");
 const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Initialize StormDB
-const engine = new StormDB.localFileEngine("./db.stormdb");
-const db = new StormDB(engine);
-db.default({ properties: [] });
+// Initialize Firebase Admin SDK
+firebaseAdmin.initializeApp({
+  credential: firebaseAdmin.credential.cert(serviceAccount),
+  databaseURL: "https://real-estate-management-85ca1-default-rtdb.firebaseio.com/"
+});
+
+const db = firebaseAdmin.firestore();
 
 // Middleware
 app.use(cors());
@@ -29,7 +33,6 @@ const updateImagePath = (property, req) => {
   };
 };
 
-
 // Add property with new fields
 app.post("/api/properties", async (req, res) => {
   const { name, location, description, price, bedrooms, bathrooms, propertyType } = req.body;
@@ -44,6 +47,8 @@ app.post("/api/properties", async (req, res) => {
 
   try {
     await image.mv(imagePath);
+
+    // Create a property object with only defined fields
     const property = {
       id: Date.now(),
       name,
@@ -55,10 +60,16 @@ app.post("/api/properties", async (req, res) => {
       propertyType,
       imagePath
     };
-    db.get("properties").push(property).save();
+
+    // Filter out undefined properties
+    const filteredProperty = Object.fromEntries(Object.entries(property).filter(([_, v]) => v !== undefined));
+
+    // Set the property document in Firestore
+    await db.collection("properties").doc(filteredProperty.id.toString()).set(filteredProperty);
+
     res.send({
       message: "Property added successfully",
-      property: updateImagePath(property, req)
+      property: updateImagePath(filteredProperty, req)
     });
   } catch (err) {
     console.error(err);
@@ -67,99 +78,87 @@ app.post("/api/properties", async (req, res) => {
 });
 
 // Get properties
-app.get("/api/properties", (req, res) => {
-  const properties = db.get("properties").value().map(property => updateImagePath(property, req));
-  if (!properties) {
+app.get("/api/properties", async (req, res) => {
+  try {
+    const snapshot = await db.collection("properties").get();
+    const properties = [];
+    snapshot.forEach(doc => {
+      properties.push(updateImagePath(doc.data(), req));
+    });
+    res.send(properties);
+  } catch (error) {
+    console.error(error);
     return res.status(500).send('Failed to fetch properties.');
   }
-  res.send(properties);
 });
+
 // Fetch a single property by ID
-app.get("/api/properties/:id", (req, res) => {
-  const { id } = req.params; // Extracting ID from request parameters
-  const properties = db.get("properties").value(); // Fetch all properties
-  const property = properties.find(p => p.id.toString() === id); // Find the property by ID
-
-  if (!property) {
-    return res.status(404).send("Property not found."); // Property not found response
+app.get("/api/properties/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const doc = await db.collection("properties").doc(id).get();
+    if (!doc.exists) {
+      return res.status(404).send("Property not found.");
+    }
+    res.send(updateImagePath(doc.data(), req));
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send('Failed to fetch property.');
   }
-
-  // Send the found property with updated image path
-  res.send(updateImagePath(property, req));
 });
-
-// Edit property
 
 // Edit property with new fields and image handling
 app.put("/api/properties/:id", async (req, res) => {
   const { id } = req.params;
   let updates = { ...req.body };
 
-  const properties = db.get("properties").value();
-  const propertyIndex = properties.findIndex(p => p.id.toString() === id);
+  try {
+    const propertyRef = db.collection("properties").doc(id);
+    const propertyDoc = await propertyRef.get();
 
-  if (propertyIndex === -1) {
-    return res.status(404).send("Property not found.");
-  }
-
-  const files = req.files;
-  let imagePath = properties[propertyIndex].imagePath;
-
-  if (files && files.image) {
-    const image = files.image;
-    imagePath = `uploads/${Date.now()}_${image.name}`;
-    await image.mv(imagePath);
-    updates = { ...updates, imagePath };
-  } else if (updates.deleteImage === 'true') {
-    // Attempt to delete the current image file if it exists
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
+    if (!propertyDoc.exists) {
+      return res.status(404).send("Property not found.");
     }
-    imagePath = ""; // Clear imagePath in the property
-    updates = { ...updates, imagePath: "" };
-    delete updates.deleteImage; // Remove deleteImage flag from updates
+
+    const propertyData = propertyDoc.data();
+    const files = req.files;
+    let imagePath = propertyData.imagePath;
+
+    if (files && files.image) {
+      const image = files.image;
+      imagePath = `uploads/${Date.now()}_${image.name}`;
+      await image.mv(imagePath);
+      updates = { ...updates, imagePath };
+    }
+
+    await propertyRef.update(updates);
+    res.send({
+      message: "Property updated successfully.",
+      property: updateImagePath({ ...propertyData, ...updates }, req)
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send('Failed to update property.');
   }
-
-  const updatedProperty = { ...properties[propertyIndex], ...updates };
-  db.get("properties").get(propertyIndex).set(updatedProperty).save();
-
-  res.send({
-    message: "Property updated successfully.",
-    property: updateImagePath(updatedProperty, req)
-  });
 });
 
 // Delete property
-app.delete("/api/properties/:id", (req, res) => {
+app.delete("/api/properties/:id", async (req, res) => {
   const { id } = req.params;
-  const initialLength = db.get("properties").value().length;
 
-  db.get("properties").set(db.get("properties").value().filter(p => p.id.toString() !== id));
-  db.save();
-
-  const newLength = db.get("properties").value().length;
-
-  if (newLength === initialLength) {
-    return res.status(404).send("Property not found.");
+  try {
+    await db.collection("properties").doc(id).delete();
+    res.send({ message: "Property deleted successfully." });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send('Failed to delete property.');
   }
-
-  res.send({ message: "Property deleted successfully." });
 });
-
 
 // Handle form submission
 app.post("/api/submit", (req, res) => {
   console.log(req.body);
   const formData = req.body;
-
-  // Create a Nodemailer transporter
-  const transporter = nodemailer.createTransport({
-    service: "Gmail",
-    auth: {
-      user: "emmanuel4cheru@gmail.com",
-      pass: "dhjrvflxdhfjsdwq",
-    },
-  });
 
   // Create the HTML email template
   const emailHTML = `
@@ -215,7 +214,6 @@ app.post("/api/submit", (req, res) => {
 <body>
     <div class="container">
         <div class="header">
-
             <h2>Contact Submission Details</h2>
         </div>
         <div class="body">
@@ -236,7 +234,6 @@ app.post("/api/submit", (req, res) => {
 </html>
 `;
 
-  // Note: Ensure you replace 'https://example.com/logo.png' with the actual URL of your company's logo.
   // Setup email data
   const mailOptions = {
     from: "emmanuel4cheru@gmail.com",

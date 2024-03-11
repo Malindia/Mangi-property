@@ -1,3 +1,5 @@
+/* Complete properties.css with all changes */
+
 :root {
     --background-color: #f4f4f4;
     --text-color: #333333;
@@ -121,4 +123,16 @@ td {
 
 .dropdown-content.show {
     display: block;
+}
+
+/* New CSS for responsiveness */
+.table-container {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+@media screen and (max-width: 600px) {
+    table {
+        font-size: 12px;
+    }
 }

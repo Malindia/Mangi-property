@@ -14,6 +14,8 @@
     "cors": "^2.8.5",
     "express": "^4.18.3",
     "express-fileupload": "^1.4.3",
+    "firebase-admin": "^12.0.0",
+    "mongoose": "^8.2.1",
     "nodemailer": "^6.9.11",
     "stormdb": "^0.6.0"
   }
