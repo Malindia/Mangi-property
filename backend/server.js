@@ -6,17 +6,16 @@ const dotenv = require('dotenv'); // Require dotenv
 dotenv.config();
 const fileUpload = require("express-fileupload");
 const firebaseAdmin = require("firebase-admin");
-// const serviceAccount = require("./firebase-key.json");
+const serviceAccount = require("./firebase-key.json");
 const cors = require("cors");
 const path = require('path');
-const { firebaseConfig } = require("./firebase.config");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Initialize Firebase Admin SDK
 firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(firebaseConfig),
+  credential: firebaseAdmin.credential.cert(serviceAccount),
   databaseURL: "https://real-estate-management-85ca1-default-rtdb.firebaseio.com/"
 });
 
