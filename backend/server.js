@@ -51,7 +51,7 @@ const updateImagePath = (property) => {
   };
 };
 
-app.post("/api/properties", async (req, res) => {
+app.post("/properties", async (req, res) => {
   const { name, location, description, price, bedrooms, bathrooms, propertyType, period } = req.body;
   const image = req.files?.image;
 
@@ -96,7 +96,7 @@ app.post("/api/properties", async (req, res) => {
 
 // Get properties
 // Get properties
-app.get("/api/properties", async (req, res) => {
+app.get("/properties", async (req, res) => {
   try {
     const snapshot = await admin.database().ref('properties').once('value');
     const properties = [];
@@ -115,7 +115,7 @@ app.get("/api/properties", async (req, res) => {
 
 
 // Fetch a single property by ID
-app.get("/api/properties/:id", async (req, res) => {
+app.get("/properties/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const snapshot = await admin.database().ref(`properties/${id}`).once('value');
@@ -130,7 +130,7 @@ app.get("/api/properties/:id", async (req, res) => {
 
 
 // Edit property with new fields and image handling
-app.put("/api/properties/:id", async (req, res) => {
+app.put("/properties/:id", async (req, res) => {
   const { id } = req.params;
   const { name, location, description, price, bedrooms, bathrooms, propertyType, period } = req.body;
 
@@ -173,7 +173,7 @@ app.put("/api/properties/:id", async (req, res) => {
 
 // Delete property
 // Delete property
-app.delete("/api/properties/:id", async (req, res) => {
+app.delete("/properties/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
