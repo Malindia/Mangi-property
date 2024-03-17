@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const API_URL = "https://mangi-property-xo74.vercel.app/api/properties";
+    const API_URL = "https://mangi-properties-backend.onrender.com/properties";
 
     // Fetch properties from the API
     fetch(API_URL)
