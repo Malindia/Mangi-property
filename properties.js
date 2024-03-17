@@ -738,7 +738,7 @@ const locations = [
     { town: 'Lugari', county: 'Kakamega' },
     { town: 'Ngong', county: 'Kajiado' },
     { town: 'Nyahururu', county: 'Laikipia' },
-]s
+]
 const API_URL = "https://mangi-properties-backend.onrender.com/properties";
 console.log("Here")
 document.addEventListener('DOMContentLoaded', () => {
