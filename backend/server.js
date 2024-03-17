@@ -1,25 +1,14 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const dotenv = require('dotenv'); // Require dotenv
-
-// Initialize dotenv
-dotenv.config();
-const fileUpload = require("express-fileupload");
-const firebaseAdmin = require("firebase-admin");
-const serviceAccount = require("./firebase-key.json");
 const cors = require("cors");
+const bodyParser = require("body-parser");
+const fileUpload = require("express-fileupload");
+const { put, list, get, remove } = require('@vercel/blob');
+const admin = require('firebase-admin');
 const path = require('path');
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
-
-// Initialize Firebase Admin SDK
-firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(serviceAccount),
-  databaseURL: "https://real-estate-management-85ca1-default-rtdb.firebaseio.com/"
-});
-
-const db = firebaseAdmin.firestore();
 
 // Middleware
 app.use(cors());
@@ -28,235 +17,192 @@ app.use(bodyParser.json());
 app.use(fileUpload());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Firebase initialization
+const firebaseConfig = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "{}");
+const firebaseDatabaseURL = process.env.FIREBASE_DATABASE_URL;
+
+if (!firebaseConfig.project_id || !firebaseConfig.private_key || !firebaseDatabaseURL) {
+  console.error('Firebase configuration is missing or incomplete.');
+  process.exit(1);
+}
+
+admin.initializeApp({
+  credential: admin.credential.cert(firebaseConfig),
+  databaseURL: firebaseDatabaseURL
+});
+
+// Vercel Blob settings
+const vercelStoreId = process.env.VERCEL_STORE_ID;
+const vercelToken = process.env.VERCEL_TOKEN;
+
+if (!vercelStoreId || !vercelToken) {
+  console.error('Vercel Blob configuration is missing or incomplete.');
+  process.exit(1);
+}
+
+const vercelSettings = { storeId: vercelStoreId, token: vercelToken, access: 'public' };
+
 // Utility function to update image path for outgoing responses
-const updateImagePath = (property, req) => {
-  if (!property || !property.imagePath) return property;
+const updateImagePath = (property) => {
+  if (!property || !property.imageUrl) return property;
   return {
     ...property,
-    imagePath: `http://${req.headers.host}/${property.imagePath}`
+    imageUrl: property.imageUrl
   };
 };
 
-// Add property with new fields
 app.post("/api/properties", async (req, res) => {
-  const { name, location, description, price, bedrooms, bathrooms, propertyType } = req.body;
-  const files = req.files;
+  const { name, location, description, price, bedrooms, bathrooms, propertyType, period } = req.body;
+  const image = req.files?.image;
 
-  if (!files || Object.keys(files).length === 0 || !files.image) {
+  if (!image) {
     return res.status(400).send('No image file was uploaded.');
   }
 
-  const image = files.image;
   const imagePath = `uploads/${Date.now()}_${image.name}`;
 
   try {
-    await image.mv(imagePath);
+    const response = await put(imagePath, image.data, vercelSettings);
+    const imageUrl = response.url;
 
-    // Create a property object with only defined fields
-    const property = {
-      id: Date.now(),
+    if (!imageUrl) {
+      return res.status(500).send('Failed to upload the image.');
+    }
+
+    const propertyData = {
       name,
       location,
       description,
-      price,
-      bedrooms,
-      bathrooms,
-      propertyType,
-      imagePath
+      price: price || 0,
+      bedrooms: bedrooms || 0,
+      bathrooms: bathrooms || 0,
+      propertyType: propertyType || "Rent",
+      period: period || "", // Include period field
+      imageUrl: imageUrl // Store image path for later retrieval
     };
 
-    // Filter out undefined properties
-    const filteredProperty = Object.fromEntries(Object.entries(property).filter(([_, v]) => v !== undefined));
-
-    // Set the property document in Firestore
-    await db.collection("properties").doc(filteredProperty.id.toString()).set(filteredProperty);
+    const propertyRef = admin.database().ref('properties').push();
+    await propertyRef.set(propertyData);
 
     res.send({
       message: "Property added successfully",
-      property: updateImagePath(filteredProperty, req)
+      property: propertyData
     });
   } catch (err) {
-    console.error(err);
-    return res.status(500).send('Failed to upload the image.');
+    console.error('Error adding property:', err);
+    res.status(500).send('Failed to add the property.');
   }
 });
 
 // Get properties
+// Get properties
 app.get("/api/properties", async (req, res) => {
   try {
-    const snapshot = await db.collection("properties").get();
+    const snapshot = await admin.database().ref('properties').once('value');
     const properties = [];
-    snapshot.forEach(doc => {
-      properties.push(updateImagePath(doc.data(), req));
+    snapshot.forEach((childSnapshot) => {
+      const property = childSnapshot.val();
+      properties.push(updateImagePath({ id: childSnapshot.key, ...property }));
     });
+    console.log(properties); // Add parentheses after console.log
     res.send(properties);
   } catch (error) {
-    console.error(error);
-    return res.status(500).send('Failed to fetch properties.');
+    console.error('Failed to fetch properties:', error);
+    res.status(500).send('Failed to fetch properties.');
   }
 });
+
+
 
 // Fetch a single property by ID
 app.get("/api/properties/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const doc = await db.collection("properties").doc(id).get();
-    if (!doc.exists) {
-      return res.status(404).send("Property not found.");
-    }
-    res.send(updateImagePath(doc.data(), req));
+    const snapshot = await admin.database().ref(`properties/${id}`).once('value');
+    const property = snapshot.val();
+    res.send(property);
   } catch (error) {
-    console.error(error);
-    return res.status(500).send('Failed to fetch property.');
+    console.error('Failed to fetch property:', error);
+    res.status(500).send('Failed to fetch property.');
   }
 });
+
+
 
 // Edit property with new fields and image handling
 app.put("/api/properties/:id", async (req, res) => {
   const { id } = req.params;
-  let updates = { ...req.body };
+  const { name, location, description, price, bedrooms, bathrooms, propertyType, period } = req.body;
 
   try {
-    const propertyRef = db.collection("properties").doc(id);
-    const propertyDoc = await propertyRef.get();
+    const image = req.files?.image;
+    let imageUrl = null;
 
-    if (!propertyDoc.exists) {
-      return res.status(404).send("Property not found.");
+    if (image) {
+      const imagePath = `uploads/${Date.now()}_${image.name}`;
+      const response = await put(imagePath, image.data, vercelSettings);
+      imageUrl = response.url;
     }
 
-    const propertyData = propertyDoc.data();
-    const files = req.files;
-    let imagePath = propertyData.imagePath;
+    const updates = {
+      name,
+      location,
+      description,
+      price: price || 0,
+      bedrooms: bedrooms || 0,
+      bathrooms: bathrooms || 0,
+      propertyType: propertyType || "Rent",
+      period: period || "", // Include period field
+    };
 
-    if (files && files.image) {
-      const image = files.image;
-      imagePath = `uploads/${Date.now()}_${image.name}`;
-      await image.mv(imagePath);
-      updates = { ...updates, imagePath };
+    if (imageUrl) {
+      updates.imageUrl = imageUrl;
     }
 
-    await propertyRef.update(updates);
+    await admin.database().ref(`properties/${id}`).update(updates);
     res.send({
       message: "Property updated successfully.",
-      property: updateImagePath({ ...propertyData, ...updates }, req)
+      property: updates
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).send('Failed to update property.');
+    console.error('Failed to update property:', error);
+    res.status(500).send('Failed to update property.');
   }
 });
 
+
+// Delete property
 // Delete property
 app.delete("/api/properties/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    await db.collection("properties").doc(id).delete();
+    // Check if the property exists
+    const snapshot = await admin.database().ref(`properties/${id}`).once('value');
+    const property = snapshot.val();
+
+    if (!property) {
+      return res.status(404).send({ message: "Property not found." });
+    }
+
+    // const imageUrl = property.imageUrl;
+
+    // // If property has an associated image, delete the image
+    // if (imageUrl) {
+    //   await remove(imageUrl, vercelSettings);
+    // }
+
+    // Remove property from the database
+    await admin.database().ref(`properties/${id}`).remove();
+
     res.send({ message: "Property deleted successfully." });
   } catch (error) {
-    console.error(error);
-    return res.status(500).send('Failed to delete property.');
+    console.error('Failed to delete property:', error);
+    res.status(500).send('Failed to delete property.');
   }
 });
 
-// Handle form submission
-app.post("/api/submit", (req, res) => {
-  console.log(req.body);
-  const formData = req.body;
 
-  // Create the HTML email template
-  const emailHTML = `
-<html>
-<head>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            padding: 20px;
-            background-color: #f9f9f9;
-            color: #333;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-        .header {
-            background-color: #0056b3;
-            color: #ffffff;
-            padding: 20px 40px;
-            text-align: center;
-        }
-        .header img {
-            max-height: 50px;
-            margin-bottom: 10px;
-        }
-        .body {
-            padding: 20px 40px;
-            background-color: #ffffff;
-            line-height: 1.5;
-        }
-        h2 {
-            color: #0056b3;
-            margin-top: 0;
-        }
-        p {
-            margin: 10px 0;
-            color: #555;
-        }
-        .footer {
-            font-size: 12px;
-            text-align: center;
-            padding: 20px;
-            background-color: #f0f0f0;
-            color: #666;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h2>Contact Submission Details</h2>
-        </div>
-        <div class="body">
-            <p><strong>Name:</strong> ${formData.name}</p>
-            <p><strong>Telephone:</strong> ${formData.telephone}</p>
-            <p><strong>Email:</strong> ${formData.email}</p>
-            <p><strong>Interest Date:</strong> ${formData.travelDate}</p>
-            <p><strong>Interested City:</strong> ${formData.city}</p>
-            <p><strong>Number of Guests:</strong> ${formData.guests}</p>
-            <p><strong>Preferred Number of Rooms:</strong> ${formData.rooms}</p>
-            <p><strong>Desired House Type:</strong> ${formData.houseType}</p>
-        </div>
-        <div class="footer">
-            Contact Form Submitted Successfully
-        </div>
-    </div>
-</body>
-</html>
-`;
-
-  // Setup email data
-  const mailOptions = {
-    from: "emmanuel4cheru@gmail.com",
-    to: "ally@tlink.dk,emmanuel4cheru@gmail.com",
-    subject: "New Contact Form Submission",
-    html: emailHTML,
-  };
-
-  // Send email
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error("Error sending email:", error);
-      return res.sendFile(__dirname + '/error.html'); // Make sure the path is correct
-    } else {
-      console.log("Email sent:", info.response);
-      return res.sendFile(__dirname + '/success.html'); // Make sure the path is correct
-    }
-  });
-});
 
 // Start the server
 app.listen(port, () => {

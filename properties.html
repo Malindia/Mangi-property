@@ -19,8 +19,8 @@
         </button>
       </header>
       <div id="propertyForm" class="modal">
-        <form id="propertyFormInner" class="form">
-          <input type="hidden" id="propertyId" />
+        <form id="propertyFormInner" class="form" enctype="multipart/form-data">
+          <input type="hidden" id="propertyId" name="propertyId" />
           <div class="form-group">
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required />
@@ -43,8 +43,8 @@
             <input type="number" id="price" name="price" required />
           </div>
           <div class="form-group">
-            <label for="type">Type:</label>
-            <select id="type" name="type" required>
+            <label for="propertyType">Type:</label>
+            <select id="propertyType" name="propertyType" required>
               <option value="Rent">Rent</option>
               <option value="Lease">Lease</option>
               <option value="Sale">Sale</option>
@@ -59,6 +59,14 @@
               <option value="Per Month">Per Month</option>
               <option value="Sale">Sale</option>
             </select>
+          </div>
+          <div class="form-group">
+            <label for="bedrooms">Bedrooms:</label>
+            <input type="number" id="bedrooms" name="bedrooms" required />
+          </div>
+          <div class="form-group">
+            <label for="bathrooms">Bathrooms:</label>
+            <input type="number" id="bathrooms" name="bathrooms" required />
           </div>
           <div class="form-group image-preview" id="imagePreviewContainer">
             <img
@@ -87,12 +95,22 @@
               <th>Price</th>
               <th>Type</th>
               <th>Period</th>
+              <th>Bedrooms</th>
+              <th>Bathrooms</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody id="propertiesDisplay"></tbody>
         </table>
       </div>
+    </div>
+    <div id="imagePreviewModal" class="modal" onclick="closeModal()">
+      <img
+        id="modalImage"
+        src=""
+        alt="Preview"
+        style="max-width: 100%; height: auto"
+      />
     </div>
     <script src="properties.js"></script>
   </body>
