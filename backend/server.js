@@ -32,8 +32,8 @@ admin.initializeApp({
 });
 
 // Vercel Blob settings
-const vercelStoreId = process.env.VERCEL_STORE_ID;
-const vercelToken = process.env.VERCEL_TOKEN;
+const vercelStoreId = process.env.V_STORE_ID;
+const vercelToken = process.env.V_TOKEN;
 
 if (!vercelStoreId || !vercelToken) {
   console.error('Vercel Blob configuration is missing or incomplete.');
