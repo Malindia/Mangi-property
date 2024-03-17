@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 propertyItem.classList.add('property-item');
 
                 const propertyImage = document.createElement('img');
-                propertyImage.src = property.imagePath;
+                propertyImage.src = property.imageUrl;
                 propertyImage.alt = property.name;
 
                 const propertyTitle = document.createElement('h3');
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const modalDescription = document.getElementById('modalDescription');
 
                     // Set modal content with property details
-                    modalImages.innerHTML = `<img src="${property.imagePath}" alt="Property Image" style="width: 100%; height: auto;">`;
+                    modalImages.innerHTML = `<img src="${property.imageUrl}" alt="Property Image" style="width: 100%; height: auto;">`;
                     modalDescription.textContent = `${property.name} - ${property.price} - ${property.location}`;
 
                     // Show the modal
