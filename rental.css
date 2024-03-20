@@ -37,6 +37,8 @@ html {
     margin-left: 100px;
     font-size: 16px;
     font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+    /* Center the wordings */
 }
 
 @media (max-width: 768px) {
@@ -46,36 +48,13 @@ html {
         cursor: pointer;
     }
 
-    .nav-list {
+    .navbar,
+    .navbar-links {
         flex-direction: column;
-        gap: 10px;
-    }
-
-    .navbar {
-        flex-direction: column;
-    }
-}
-
-/* Hamburger Menu Button */
-.hamburger {
-    display: none;
-    font-size: 24px;
-    background: transparent;
-    border: none;
-    color: #ffffff;
-    cursor: pointer;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .hamburger {
-        display: block;
-        color: white;
     }
 
     .navbar-links {
         display: none;
-        flex-direction: column;
         width: 100%;
         text-align: center;
     }
@@ -91,6 +70,23 @@ html {
     }
 }
 
+/* Hamburger Menu Button */
+.hamburger {
+    display: none;
+    font-size: 24px;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .hamburger {
+        display: block;
+        color: white;
+    }
+}
+
 /* Smooth Transition */
 .navbar-links,
 .navbar-links a {
@@ -100,12 +96,13 @@ html {
 /* Hero Section */
 .property-section {
     margin: 40px 20px;
+    text-align: center;
+    /* Center the wordings */
 }
 
 .property-section h2 {
     color: #333;
     margin-bottom: 20px;
-    text-align: center;
 }
 
 .property-list {
@@ -154,6 +151,8 @@ html {
 .property-item p {
     padding: 10px;
     color: #333;
+    text-align: center;
+    /* Center the wordings */
 }
 
 .property-item h3 {
@@ -183,7 +182,7 @@ html {
     }
 }
 
-/* Modal Styles */
+/*/* Modal Styles */
 .modal {
     display: none;
     position: fixed;
@@ -197,13 +196,78 @@ html {
 }
 
 .modal-content {
-    background-color: #fff;
+    background-color: #fefefe;
     margin: 5% auto;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     max-width: 500px;
     width: 90%;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #333;
+}
+
+.modal-images img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.modal-type {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.modal-description {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.modal-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    color: #666;
+}
+
+.modal-details p {
+    margin: 5px 0;
+}
+
+.modal-details .modal-bedrooms,
+.modal-details .modal-bathrooms {
+    margin-right: 10px;
+}
+
+.modal-price {
+    font-size: 20px;
+    color: #333;
+    font-weight: bold;
+    margin-top: 20px;
 }
 
 .close-button {
