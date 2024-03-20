@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 propertyItem.appendChild(propertyLocation);
 
                 // Determine which section to append the property to based on its type
-                if (property.type === 'Rent' || property.type === 'Airbnb') {
+                if (property.propertyType === 'Rent' || property.propertyType === 'Airbnb') {
                     if (property.period === 'Per Month') {
                         longTermRentalsSection.querySelector('.property-list').appendChild(propertyItem);
                     } else {
@@ -42,15 +42,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Add click event listener to show property details in modal
                 propertyItem.addEventListener('click', function () {
-                    const modalImages = document.getElementById('modalImages');
-                    const modalDescription = document.getElementById('modalDescription');
-
-                    // Set modal content with property details
-                    modalImages.innerHTML = `<img src="${property.imageUrl}" alt="Property Image" style="width: 100%; height: auto;">`;
-                    modalDescription.textContent = `${property.name} - ${property.price} - ${property.location}`;
+                    const modalContent = document.getElementById('propertyModal');
+                    modalContent.querySelector('.modal-images').innerHTML = `<img src="${property.imageUrl}" alt="${property.name}" style="width: 100%; height: auto;">`;
+                    modalContent.querySelector('.modal-title').textContent = property.name;
+                    modalContent.querySelector('.modal-price').textContent = `Price: ${property.price}`;
+                    modalContent.querySelector('.modal-type').textContent = `Type: ${property.propertyType}`;
+                    modalContent.querySelector('.modal-description').textContent = property.description;
 
                     // Show the modal
-                    document.getElementById('propertyModal').style.display = 'block';
+                    modalContent.style.display = 'block';
                 });
             });
         })
