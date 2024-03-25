@@ -741,7 +741,6 @@ const locations = [
 ]
 const API_URL = "https://mangi-properties-backend.onrender.com/properties";
 const BASE_API_URL = "https://mangi-properties-backend.onrender.com";
-console.log("Here")
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('location').addEventListener('input', handleLocationInput);
     document.getElementById('addPropertyBtn').addEventListener('click', () => openForm());
@@ -844,6 +843,7 @@ function clearFormFields() {
 
 async function submitPropertyForm(event) {
     event.preventDefault();
+    const token = localStorage.getItem('token'); // Get JWT token from localStorage
     const propertyId = document.getElementById('propertyId').value;
     const formData = new FormData(document.getElementById('propertyFormInner'));
     const url = propertyId ? `${API_URL}/${propertyId}` : API_URL;
@@ -852,7 +852,11 @@ async function submitPropertyForm(event) {
         const response = await fetch(url, {
             method: propertyId ? 'PUT' : 'POST',
             body: formData,
+            headers: {
+                'Authorization': `Bearer ${token}`, // Include JWT token in request headers
+            }
         });
+
         if (response.ok) {
             alert('Property saved successfully!');
             closeForm();
@@ -868,22 +872,26 @@ async function submitPropertyForm(event) {
 }
 
 async function fetchProperties() {
-    // try {
-    console.log("Here")
-    const response = await fetch(API_URL);
-    console.log("------------------------------")
-    console.log(response)
-    if (!response.ok) {
-        throw new Error('Failed to fetch properties');
+    try {
+        const token = localStorage.getItem('token'); // Get JWT token from localStorage
+        const response = await fetch(API_URL, {
+            headers: {
+                'Authorization': `Bearer ${token}`, // Include JWT token in request headers
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch properties');
+        }
+
+        const properties = await response.json();
+        displayProperties(properties);
+    } catch (error) {
+        console.error('Failed to fetch properties:', error);
+        alert('Failed to fetch properties. Please try again later.');
     }
-    const properties = await response.json();
-    displayProperties(properties);
-    // } catch (error) {
-    //     console.log(error)
-    //     console.error('Failed to fetch properties:', error);
-    //     alert('Failed to fetch properties. Please try again later.');
-    // }
 }
+
 
 function displayProperties(properties) {
     const display = document.getElementById('propertiesDisplay');
@@ -908,22 +916,30 @@ function displayProperties(properties) {
 
 async function editProperty(id) {
     const url = `${API_URL}/${id}`;
+    const token = localStorage.getItem('token'); // Get JWT token from localStorage
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': `Bearer ${token}`, // Include JWT token in headers
+            },
+        });
+
         if (!response.ok) {
             throw new Error('Failed to fetch property details');
         }
+
         const property = await response.json();
 
         if (property) {
+            // Populate form fields with property details
             document.getElementById('propertyId').value = property.id;
             document.getElementById('name').value = property.name || '';
             document.getElementById('location').value = property.location || '';
             document.getElementById('description').value = property.description || '';
             document.getElementById('price').value = property.price || '';
             document.getElementById('propertyType').value = property.propertyType || '';
-            document.getElementById('period').value = property.period || ''; // Include period field
+            document.getElementById('period').value = property.period || '';
             document.getElementById('bedrooms').value = property.bedrooms || '';
             document.getElementById('bathrooms').value = property.bathrooms || '';
 
@@ -937,9 +953,18 @@ async function editProperty(id) {
     }
 }
 
+
 async function deleteProperty(id) {
+    const token = localStorage.getItem('token'); // Get JWT token from localStorage
+
     try {
-        const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`, // Include JWT token in headers
+            },
+        });
+
         if (response.ok) {
             alert('Property deleted successfully!');
             fetchProperties();
@@ -949,9 +974,9 @@ async function deleteProperty(id) {
     } catch (error) {
         console.error('Delete property failed:', error);
         alert(`Error: ${error.message}`);
-        console.log('Response status:', response.status); // Log the response status
     }
 }
+
 
 
 function handleLocationInput() {
