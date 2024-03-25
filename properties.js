@@ -740,7 +740,7 @@ const locations = [
     { town: 'Nyahururu', county: 'Laikipia' },
 ]
 const API_URL = "https://mangi-properties-backend.onrender.com/properties";
-const BASE_API_URL = "http://192.168.100.3:3000";
+const BASE_API_URL = "https://mangi-properties-backend.onrender.com";
 console.log("Here")
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('location').addEventListener('input', handleLocationInput);
