@@ -740,14 +740,93 @@ const locations = [
     { town: 'Nyahururu', county: 'Laikipia' },
 ]
 const API_URL = "https://mangi-properties-backend.onrender.com/properties";
+const BASE_API_URL = "http://192.168.100.3:3000";
 console.log("Here")
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('location').addEventListener('input', handleLocationInput);
     document.getElementById('addPropertyBtn').addEventListener('click', () => openForm());
     document.getElementById('propertyFormInner').addEventListener('submit', submitPropertyForm);
-    fetchProperties();
+    checkAuthenticationAndFetchProperties(); // Check authentication status and fetch properties
 });
 
+async function checkAuthenticationAndFetchProperties() {
+    try {
+        const token = localStorage.getItem('token');
+        if (token) {
+            // Verify token with the server
+            const response = await fetch(BASE_API_URL + '/verify-token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ token })
+            });
+            if (response.ok) {
+                fetchProperties(); // Fetch properties if token is valid
+            } else {
+                // Token is invalid, request OTP for re-verification
+                requestOTP();
+            }
+        } else {
+            // Token is not found, request OTP for verification
+            requestOTP();
+        }
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        alert('Error checking authentication. Please try again later.');
+    }
+}
+
+async function requestOTP() {
+
+    try {
+        const response = await fetch(BASE_API_URL + '/generate-otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: ""
+        });
+        if (response.ok) {
+            alert('OTP has been sent to your email. Please check your inbox.');
+            // Display OTP form
+            document.getElementById('otpForm').style.display = 'block';
+            document.getElementById('app').style.filter = 'blur(8px)';
+        } else {
+            throw new Error('Failed to generate OTP');
+        }
+    } catch (error) {
+        console.error('Error generating OTP:', error);
+        alert('Failed to generate OTP. Please try again.');
+    }
+}
+
+async function submitOTPForm(event) {
+    event.preventDefault();
+    const otp = document.getElementById('otp').value;
+
+    try {
+        const response = await fetch(BASE_API_URL + '/verify-otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ otp })
+        });
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('token', data.token); // Store token in localStorage
+            document.getElementById('otpForm').style.display = 'none';
+            document.getElementById('app').style.filter = 'none';
+            fetchProperties(); // Fetch properties after successful verification
+        } else {
+            throw new Error('Invalid OTP');
+        }
+    } catch (error) {
+        console.error('Error verifying OTP:', error);
+        alert('Invalid OTP. Please try again.');
+    }
+}
 function openForm() {
     document.getElementById('propertyForm').style.display = 'block';
     clearFormFields();

@@ -112,6 +112,22 @@
         style="max-width: 100%; height: auto"
       />
     </div>
+    <div id="otpForm" class="modal" style="display: none">
+      <form
+        id="otpFormInner"
+        class="form"
+        enctype="multipart/form-data"
+        onsubmit="submitOTPForm(event)"
+      >
+        <div class="form-group">
+          <label for="otp">OTP:</label>
+          <input type="text" id="otp" name="otp" required />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Submit OTP</button>
+        </div>
+      </form>
+    </div>
     <script src="properties.js"></script>
   </body>
 </html>
