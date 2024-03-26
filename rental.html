@@ -1,111 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Real Estate Listings</title>
-    <link rel="stylesheet" href="rental.css" >
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="rental.css" />
+  </head>
+  <body>
     <nav class="navbar">
-        <div class="container">
-            <img src="images/mangilogo.jpg" class = "logo">
-            <div class="navbar-links">
-                <a href="home.html">Home</a>
-                <a href="#about">About</a>
-                <a href="reservation.html">Reservations</a>
-                <a href="rental.html">Property Listings</a>
-                <a href="home.html">Contact</a>
-            </div>
+      <div class="container">
+        <img src="images/mangilogo.jpg" class="logo" />
+        <button class="hamburger">&#9776;</button>
+        <div class="navbar-links">
+          <a href="home.html">Home</a>
+          <a href="#about">About</a>
+          <a href="reservation.html">Reservations</a>
+          <a href="rental.html">Property Listings</a>
+          <a href="#contact">Contact</a>
         </div>
+      </div>
     </nav>
 
-<section class="property-section" id="for-sale">
-    <h2>Properties for Sale</h2>
-    <div class="property-list">
-        <!-- Example Property -->
-        <div class="property-item">
-            <img src="images/holiday.jpg" alt="Property 1">
-            <h3>Modern Apartment</h3>
-            <p>$300,000 Nariobi</p>
-        </div>
-        <!-- Additional properties for sale -->
-    </div>
-</section>
+    <section class="property-section" id="for-sale">
+      <h2>Properties for Sale</h2>
+      <div class="property-list" id="for-sale-properties">
+        <!-- Properties for sale will be dynamically added here -->
+      </div>
+    </section>
 
-<section class="property-section" id="rent-long-term">
-    <h2>Long-term Rentals</h2>
-    <div class="property-list">
-        <!-- Example Property -->
-        <div class="property-item">
-            <img src="images/pic2.jpg" alt="Property 2">
-            <h3>Luxury Villa</h3>
-            <p>$5,000/month - Malindi</p>
-        </div>
-        <!-- Additional properties for long-term rental -->
-    </div>
-</section>
+    <section class="property-section" id="rent-long-term">
+      <h2>Long-term Rentals</h2>
+      <div class="property-list" id="long-term-rentals">
+        <!-- Long-term rental properties will be dynamically added here -->
+      </div>
+    </section>
 
-<section class="property-section" id="rent-short-term">
-    <h2>Short-term Rentals</h2>
-    <div class="property-list">
-        <!-- Example Property -->
-        <div class="property-item">
-            <img src="images/win.jpg" alt="Property 3">
-            <h3>Cozy Cottage</h3>
-            <p>$250/night - watamu</p>
-        </div>
-        <!-- Additional properties for short-term rental -->
-    </div>
-    <div class="property-list">
-        <!-- Example Property -->
-        <div class="property-item">
-            <img src="images/hous2.jpg" alt="Property 3">
-            <h3>Cozy Cottage</h3>
-            <p>$150/night - watamu</p>
-        </div>
-        <!-- Additional properties for short-term rental -->
-    </div>
-    <div class="property-list">
-        <!-- Example Property -->
-        <div class="property-item">
-            <img src="images/holiday.jpg" alt="Property 3">
-            <h3>Cozy Cottage</h3>
-            <p>$150/night - watamu</p>
-        </div>
-        <!-- Additional properties for short-term rental -->
-    </div>
-    <div class="property-list">
-        <!-- Example Property -->
-        <div class="property-item">
-            <img src="images/win.jpg" alt="Property 3">
-            <h3>Cozy Cottage</h3>
-            <p>$150/night - watamu</p>
-        </div>
-        <!-- Additional properties for short-term rental -->
-    </div>
-    <div class="property-list">
-    
-        <div class="property-item">
-            <img src="images/featu.jpg" alt="Property 3">
-            <h3>Cozy Cottage</h3>
-            <p>$150/night - watamu</p>
-        </div>
-        
-    
-   </div>
-</section>
+    <section class="property-section" id="rent-short-term">
+      <h2>Short-term Rentals</h2>
+      <div class="property-list" id="short-term-rentals">
+        <!-- Short-term rental properties will be dynamically added here -->
+      </div>
+    </section>
 
-<!-- Modal for displaying property details -->
-<div id="propertyModal" class="modal">
-    <div class="modal-content">
+    <!-- Modal for displaying property details -->
+    <div id="propertyModal" class="modal">
+      <div class="modal-content">
         <span class="close-button">&times;</span>
-        <h2>Property Details</h2>
-        <!-- Place for dynamic content -->
-        <div id="modalImages"></div>
-        <p id="modalDescription"></p>
+        <div class="modal-images"></div>
+        <h2 class="modal-title"></h2>
+        <p class="modal-description"></p>
+        <p class="modal-type"></p>
+        <p class="modal-bedrooms"></p>
+        <p class="modal-bathrooms"></p>
+        <p class="modal-price"></p>
+      </div>
     </div>
-</div>
-<script src="rental.js"></script>
-</body>
+
+    <script src="rental.js"></script>
+    <script src="script.js"></script>
+  </body>
 </html>

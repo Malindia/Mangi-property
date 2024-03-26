@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 propertyItem.appendChild(propertyImage);
                 propertyItem.appendChild(propertyTitle);
-                propertyItem.appendChild(propertyDescription);
+                // propertyItem.appendChild(propertyDescription);
                 propertyItem.appendChild(propertyLocation);
 
                 // Determine which section to append the property to based on its type
