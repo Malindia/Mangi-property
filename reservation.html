@@ -5,23 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reservation Form</title>
     <link rel="stylesheet" href="reservation.css" />
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <nav class="navbar">
       <div class="container">
-        <img src="images/mangilogo.jpg" class="logo" alt="Company Logo" />
+        <img src="images/mangilogo.jpg" class="logo" />
+        <button class="hamburger">&#9776;</button>
         <div class="navbar-links">
           <a href="home.html">Home</a>
-          <a href="about.html">About</a>
+          <a href="#about">About</a>
           <a href="reservation.html">Reservations</a>
           <a href="rental.html">Property Listings</a>
-          <a href="contact.html">Contact</a>
+          <a href="#contact">Contact</a>
         </div>
       </div>
     </nav>
+
     <form
       id="reservationForm"
-      action="http://192.168.100.3:3000/api/submit"
+      action="https://mangi-properties-backend.onrender.com/submit"
       method="POST"
     >
       <h2>Travel Reservation Form</h2>
@@ -62,8 +65,9 @@
         <option value="Studio Apartment">Studio Apartment</option>
       </select>
 
-      <button type="submit">Submit Reservation</button>
+      <button type="submit" id="submitBtn">Submit Reservation</button>
     </form>
     <script src="reservation.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>

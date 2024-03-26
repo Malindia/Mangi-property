@@ -1,0 +1,138 @@
+:root {
+    --background-color: #f4f4f4;
+    --text-color: #333333;
+    --btn-background-color: #4CAF50;
+    --btn-text-color: #ffffff;
+    --btn-hover-color: #45a049;
+    --input-border-color: #dddddd;
+    --input-focus-border-color: #4CAF50;
+    --dropdown-bg-color: #ffffff;
+    --dropdown-border-color: #dddddd;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.btn {
+    background-color: var(--btn-background-color);
+    color: var(--btn-text-color);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: var(--btn-hover-color);
+}
+
+.btn-cancel {
+    background-color: #cccccc;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 600px;
+    background-color: var(--background-color);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+input[type="text"],
+input[type="file"],
+textarea,
+select,
+input[type="number"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid var(--input-border-color);
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="file"]:focus,
+textarea:focus,
+select:focus,
+input[type="number"]:focus {
+    border-color: var(--input-focus-border-color);
+    outline: none;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.image-preview img {
+    margin-top: 10px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: var(--dropdown-bg-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--dropdown-border-color);
+    border-radius: 5px;
+    z-index: 1000;
+    width: calc(100% - 22px);
+}
+
+.dropdown-content .dropdown-option {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dropdown-content .dropdown-option:hover {
+    background-color: #f9f9f9;
+}
+
+.dropdown-content.show {
+    display: block;
+}
+
+/* New CSS for responsiveness */
+.table-container {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+@media screen and (max-width: 600px) {
+    table {
+        font-size: 12px;
+    }
+}

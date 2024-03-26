@@ -1,58 +1,7 @@
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #19221d;
-    padding: 20px;
-    color: #fff;
-    /* Ensure text readability */
-}
-
-.navbar {
-    background-color: #405247;
-    color: #fff;
-    padding: 20px 0;
-}
-
-.container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 0 20px;
-}
-
-.logo {
-    width: 80px;
-    cursor: pointer;
-}
-
-.navbar-links a {
-    color: #fff;
-    text-decoration: none;
-    margin-left: 20px;
-    /* Adjusted for better spacing */
-    font-size: 16px;
-}
-
-@media (max-width: 768px) {
-    .navbar-links a {
-        margin-left: 0;
-        display: block;
-        /* Stack nav items under each other */
-        margin-bottom: 10px;
-    }
-
-    .logo {
-        margin: auto;
-        /* Center logo on smaller screens */
-        display: block;
-        width: 60px;
-        /* Adjusted size */
-    }
-}
-
 form {
     background: #ffffff;
     color: #333;
     font-family: 'Times New Roman', Times, serif;
-    /* For form text */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -62,14 +11,12 @@ form {
 
 h2 {
     color: #405247;
-    /* Match the navbar color */
 }
 
 label {
     display: block;
     margin-top: 15px;
     color: #333;
-    /* Ensure label readability */
 }
 
 input[type="text"],
@@ -77,24 +24,36 @@ input[type="date"],
 input[type="number"],
 input[type="tel"],
 input[type="email"],
-select,
-button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-}
-
-button {
+select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+#submitBtn {
     background-color: #405247;
-    /* Match navbar color */
+    /* Dark green background */
     color: white;
+    /* White text */
+    padding: 10px 20px;
+    /* Top and bottom padding of 10px, left and right padding of 20px */
+    border-radius: 5px;
+    /* Rounded corners */
+    border: none;
+    /* No border */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+    font-size: 16px;
+    /* Larger font size */
     margin-top: 20px;
+    /* Margin at the top */
+    transition: background-color 0.3s ease;
+    /* Smooth transition for background color */
 }
 
-button:hover {
+#submitBtn:hover {
     background-color: #25382e;
-    /* Darker shade for hover effect */
+    /* Slightly darker green on hover */
 }
