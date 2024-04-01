@@ -27,8 +27,8 @@
         <div class="hero" >
             <div class="search-box">
                 <h1>Find Your Perfect Home</h1>
-                <input type="text" placeholder="Search destinations">
-                <button>Search</button>
+                <input id="searchInput" type="text" placeholder="Search destinations">
+        <button onclick="search()">Search</button>
             </div>
         </div>
     <!-- </header> -->
@@ -178,6 +178,11 @@
         </div>
     </footer>
         <script src="script.js"></script>
-
+<script>
+        function search() {
+            var location = document.getElementById("searchInput").value;
+            window.location.href = "rental.html?location=" + encodeURIComponent(location);
+        }
+    </script>
 </body>
 </html>

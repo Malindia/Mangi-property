@@ -1,10 +1,32 @@
 document.addEventListener('DOMContentLoaded', function () {
     const API_URL = "https://mangi-properties-backend.onrender.com/properties";
+    // const API_URL = "http://192.168.100.3:3000/properties";
+    const urlParams = new URLSearchParams(window.location.search);
+    const locationParam = urlParams.get('location');
+
+    let apiUrl = API_URL;
+
+    // If location parameter is present, add it to the API URL
+    if (locationParam) {
+        apiUrl += `?location=${locationParam}`;
+    }
 
     // Fetch properties from the API
-    fetch(API_URL)
-        .then(response => response.json())
-        .then(properties => {
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const properties = data.properties;
+            const message = data.message;
+
+            if (message) {
+                alert(message); // Display message from the backend
+            }
+
             // Select the property sections
             const forSaleSection = document.getElementById('for-sale');
             const longTermRentalsSection = document.getElementById('rent-long-term');
@@ -32,7 +54,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 propertyItem.appendChild(propertyImage);
                 propertyItem.appendChild(propertyTitle);
-                // propertyItem.appendChild(propertyDescription);
                 propertyItem.appendChild(propertyLocation);
 
                 // Determine which section to append the property to based on its type
