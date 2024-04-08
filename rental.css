@@ -1,103 +1,10 @@
-/* Basic Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body,
-html {
-    font-family: 'Arial', sans-serif;
-    width: 100%;
-    overflow-x: hidden;
-}
-
-/* Navigation Bar */
-.navbar {
-    background-color: #405247;
-    color: #fff;
-    padding: 20px 0;
-}
-
-.container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 0 20px;
-}
-
-.logo {
-    margin: 1%;
-    width: 80px;
-    cursor: pointer;
-}
-
-.navbar-links a {
-    color: #fff;
-    text-decoration: none;
-    margin-left: 100px;
-    font-size: 16px;
-    font-family: 'Times New Roman', Times, serif;
-    text-align: center;
-    /* Center the wordings */
-}
-
-@media (max-width: 768px) {
-    .logo {
-        margin: 1%;
-        width: 40px;
-        cursor: pointer;
-    }
-
-    .navbar,
-    .navbar-links {
-        flex-direction: column;
-    }
-
-    .navbar-links {
-        display: none;
-        width: 100%;
-        text-align: center;
-    }
-
-    .navbar-links a {
-        display: block;
-        margin: 10px 0;
-    }
-
-    /* Show Menu */
-    .navbar-links.active {
-        display: flex;
-    }
-}
-
-/* Hamburger Menu Button */
-.hamburger {
-    display: none;
-    font-size: 24px;
-    background: transparent;
-    border: none;
-    color: #ffffff;
-    cursor: pointer;
-}
-
-@media (max-width: 768px) {
-    .hamburger {
-        display: block;
-        color: white;
-    }
-}
-
-/* Smooth Transition */
-.navbar-links,
-.navbar-links a {
-    transition: transform 0.5s ease, opacity 0.5s ease;
-}
-
-/* Hero Section */
+/* Property Section */
 .property-section {
-    margin: 40px 20px;
+    margin: 40px auto;
+    /* Center the property section */
+    max-width: 1200px;
+    /* Limit maximum width */
     text-align: center;
-    /* Center the wordings */
 }
 
 .property-section h2 {
@@ -106,20 +13,26 @@ html {
 }
 
 .property-list {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* Center items horizontally */
+    margin: 0 -10px;
+    /* Adjust margin to handle spacing between items */
 }
 
 .property-item {
+    flex: 0 1 calc(25% - 20px);
+    /* Adjust width for responsive layout */
     background-color: #f9f9f9;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     cursor: pointer;
-    position: relative;
-    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    margin: 0 10px;
+    /* Add margin to create space between items */
 }
 
 .property-item:hover {
@@ -135,24 +48,11 @@ html {
     border-radius: 12px 12px 0 0;
 }
 
-.property-item .property-icons {
-    display: flex;
-    justify-content: space-around;
-    padding: 10px;
-    background-color: #fff;
-}
-
-.property-item .property-icons i {
-    color: #666;
-    font-size: 18px;
-}
-
 .property-item h3,
 .property-item p {
     padding: 10px;
     color: #333;
     text-align: center;
-    /* Center the wordings */
 }
 
 .property-item h3 {
@@ -164,25 +64,20 @@ html {
     font-size: 16px;
 }
 
-@media (max-width: 1024px) {
-    .property-list {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
 @media (max-width: 768px) {
-    .property-list {
-        grid-template-columns: repeat(2, 1fr);
+    .property-item {
+        flex-basis: calc(50% - 20px);
+        /* Adjust width for smaller screens */
     }
 }
 
 @media (max-width: 480px) {
-    .property-list {
-        grid-template-columns: 1fr;
+    .property-item {
+        flex-basis: calc(100% - 20px);
+        /* Adjust width for even smaller screens */
     }
 }
-
-/*/* Modal Styles */
+/* Modal Styles */
 .modal {
     display: none;
     position: fixed;
@@ -201,8 +96,10 @@ html {
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    max-width: 500px;
+    max-width: 800px;
+    max-height: 800px;
     width: 90%;
+    height: 80%;
 }
 
 .close-button {
@@ -219,14 +116,18 @@ html {
     color: #333;
 }
 
-.modal-images img {
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.modal-images {
+    display: flex;
+    overflow-x: auto;
 }
 
+.modal-images img {
+    width: auto;
+    height: 400px;
+    margin-right: 10px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 .modal-title {
     font-size: 24px;
     font-weight: bold;
@@ -234,24 +135,8 @@ html {
     margin-bottom: 10px;
 }
 
-.modal-type {
-    font-size: 18px;
-    color: #666;
-    margin-bottom: 10px;
-}
-
-.modal-description {
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 10px;
-}
-
 .modal-details {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 16px;
-    color: #666;
+    margin-top: 10px;
 }
 
 .modal-details p {
@@ -260,6 +145,7 @@ html {
 
 .modal-details .modal-bedrooms,
 .modal-details .modal-bathrooms {
+    display: block;
     margin-right: 10px;
 }
 
@@ -268,18 +154,4 @@ html {
     color: #333;
     font-weight: bold;
     margin-top: 20px;
-}
-
-.close-button {
-    color: #aaa;
-    float: right;
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.close-button:hover,
-.close-button:focus {
-    color: #333;
 }

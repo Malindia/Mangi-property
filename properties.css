@@ -44,10 +44,12 @@ header {
 
 .modal {
     display: none;
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
     width: 90%;
     max-width: 600px;
     background-color: var(--background-color);
@@ -61,12 +63,18 @@ header {
     margin-bottom: 1rem;
 }
 
+.form-container {
+    overflow-y: auto;
+    max-height: calc(100vh - 150px);
+    /* Adjust as needed */
+}
+
 input[type="text"],
 input[type="file"],
 textarea,
 select,
 input[type="number"] {
-    width: calc(100% - 22px);
+    width: 100%;
     padding: 10px;
     margin-top: 5px;
     border-radius: 5px;
@@ -95,11 +103,43 @@ td {
     padding: 10px;
     border-bottom: 1px solid #ddd;
 }
-
+/* Set the margin using percentage */
 .image-preview img {
-    margin-top: 10px;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    border-radius: 10%;
 }
 
+/* Update the overflow property */
+.image-gallery-content {
+    display: flex;
+    overflow-x: auto;
+    /* Change to 'auto' to enable horizontal scrolling if needed */
+    overflow-y: hidden;
+    /* Hide vertical overflow */
+    gap: 2%;
+    /* Add gap between images */
+}
+
+/* Adjust padding and height to make it responsive */
+.image-gallery-content img {
+    padding: 0 2%;
+    /* Adjust left and right padding */
+    border-radius: 8%;
+    max-width: calc(100% - 4%);
+    /* Subtract the padding from the width */
+    height: auto;
+    /* Auto height for responsiveness */
+    max-height: 600px;
+    /* Set max-height to limit image height */
+    transition: transform 1.5s ease-in-out;
+}
+
+/* Change visibility property to 'hidden' */
+.image-gallery-content img.hidden {
+    transform: translateX(-100%);
+    visibility: hidden;
+}
 .dropdown-content {
     display: none;
     position: absolute;
@@ -108,7 +148,8 @@ td {
     border: 1px solid var(--dropdown-border-color);
     border-radius: 5px;
     z-index: 1000;
-    width: calc(100% - 22px);
+    width: 100%;
+    left: 0;
 }
 
 .dropdown-content .dropdown-option {
@@ -134,5 +175,11 @@ td {
 @media screen and (max-width: 600px) {
     table {
         font-size: 12px;
+    }
+
+    .modal {
+        width: 100%;
+        padding: 10px;
+        max-width: none;
     }
 }

@@ -741,10 +741,15 @@ const locations = [
 ]
 const API_URL = "https://mangi-properties-backend.onrender.com/properties";
 const BASE_API_URL = "https://mangi-properties-backend.onrender.com";
+// const API_URL = "http://192.168.100.15:3000/properties";
+// const BASE_API_URL = "http://192.168.100.15:3000";
+
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('location').addEventListener('input', handleLocationInput);
     document.getElementById('addPropertyBtn').addEventListener('click', () => openForm());
     document.getElementById('propertyFormInner').addEventListener('submit', submitPropertyForm);
+    document.getElementById('images').addEventListener('change', handleImageChange);
+
     checkAuthenticationAndFetchProperties(); // Check authentication status and fetch properties
 });
 
@@ -777,7 +782,6 @@ async function checkAuthenticationAndFetchProperties() {
 }
 
 async function requestOTP() {
-
     try {
         const response = await fetch(BASE_API_URL + '/generate-otp', {
             method: 'POST',
@@ -803,7 +807,6 @@ async function requestOTP() {
 async function submitOTPForm(event) {
     event.preventDefault();
     const otp = document.getElementById('otp').value;
-
     try {
         const response = await fetch(BASE_API_URL + '/verify-otp', {
             method: 'POST',
@@ -826,6 +829,7 @@ async function submitOTPForm(event) {
         alert('Invalid OTP. Please try again.');
     }
 }
+
 function openForm() {
     document.getElementById('propertyForm').style.display = 'block';
     clearFormFields();
@@ -841,13 +845,39 @@ function clearFormFields() {
     document.getElementById('imagePreview').style.display = 'none';
 }
 
+function handleImageChange() {
+    const files = this.files;
+    const imagePreview = document.getElementById('imagePreview');
+    if (files.length > 0) {
+        imagePreview.style.display = 'block';
+        imagePreview.src = URL.createObjectURL(files[0]);
+    } else {
+        imagePreview.style.display = 'none';
+        imagePreview.src = '';
+    }
+}
+
 async function submitPropertyForm(event) {
     event.preventDefault();
     const token = localStorage.getItem('token'); // Get JWT token from localStorage
     const propertyId = document.getElementById('propertyId').value;
-    const formData = new FormData(document.getElementById('propertyFormInner'));
+    const formData = new FormData(); // Create FormData object
+    formData.append('propertyId', propertyId);
+    // Append single-value form fields
+    formData.append('name', document.getElementById('name').value);
+    formData.append('location', document.getElementById('location').value);
+    formData.append('description', document.getElementById('description').value);
+    formData.append('price', document.getElementById('price').value);
+    formData.append('propertyType', document.getElementById('propertyType').value);
+    formData.append('period', document.getElementById('period').value);
+    formData.append('bedrooms', document.getElementById('bedrooms').value);
+    formData.append('bathrooms', document.getElementById('bathrooms').value);
+    // Append files (up to 5 files)
+    const files = document.getElementById('images').files;
+    for (let i = 0; i < files.length; i++) {
+        formData.append('images', files[i]);
+    }
     const url = propertyId ? `${API_URL}/${propertyId}` : API_URL;
-
     try {
         const response = await fetch(url, {
             method: propertyId ? 'PUT' : 'POST',
@@ -856,7 +886,6 @@ async function submitPropertyForm(event) {
                 'Authorization': `Bearer ${token}`, // Include JWT token in request headers
             }
         });
-
         if (response.ok) {
             alert('Property saved successfully!');
             closeForm();
@@ -879,58 +908,93 @@ async function fetchProperties() {
                 'Authorization': `Bearer ${token}`, // Include JWT token in request headers
             }
         });
-
         if (!response.ok) {
             throw new Error('Failed to fetch properties');
         }
-
         const properties = await response.json();
-        displayProperties(properties);
+        await displayProperties(properties?.properties);
     } catch (error) {
         console.error('Failed to fetch properties:', error);
         alert('Failed to fetch properties. Please try again later.');
     }
 }
-
-
+// Display properties in the table
 function displayProperties(properties) {
     const display = document.getElementById('propertiesDisplay');
-    display.innerHTML = properties.map(property => `
-        <tr>
-            <td><img src="${property.imageUrl || ''}" alt="Property Image" style="width:100px; height: auto; cursor: pointer;" onclick="previewImage('${property.imageUrl || ''}')"></td>
-            <td>${property.name || '-'}</td>
-            <td>${property.location || '-'}</td>
-            <td>${property.description || '-'}</td>
-            <td>${property.price || '-'}</td>
-            <td>${property.propertyType || '-'}</td>
-            <td>${property.period || '-'}</td>
-            <td>${property.bedrooms || '-'}</td>
-            <td>${property.bathrooms || '-'}</td>
-            <td>
-                <button class="btn" onclick="editProperty('${property.id}')"><i class="fas fa-edit"></i>Edit</button>
-                <button class="btn" onclick="deleteProperty('${property.id}')"><i class="fas fa-trash-alt"></i>Delete</button>
-            </td>
-        </tr>
-    `).join('');
+    if (!properties || properties.length === 0) {
+        display.innerHTML = '<tr><td colspan="10">No properties found</td></tr>';
+        return;
+    }
+    display.innerHTML = properties.map(property => {
+        const imageUrl = property.imageUrls && property.imageUrls.length > 0 ? property.imageUrls[0] : 'placeholder.jpg';
+        const imageUrlsString = JSON.stringify(property.imageUrls).replace(/"/g, '&quot;'); // Escape double quotes in imageUrls
+        return `
+            <tr>
+                <td>
+                    <img src="${imageUrl}" alt="Property Image" style="width:100px; height: auto; cursor: pointer;" onclick="showImageGallery(${imageUrlsString})">
+                </td>
+                <td>${property.name || '-'}</td>
+                <td>${property.location || '-'}</td>
+                <td>${property.description || '-'}</td>
+                <td>${property.price || '-'}</td>
+                <td>${property.propertyType || '-'}</td>
+                <td>${property.period || '-'}</td>
+                <td>${property.bedrooms || '-'}</td>
+                <td>${property.bathrooms || '-'}</td>
+                <td>
+                    <button class="btn" onclick="editProperty('${property.id}')"><i class="fas fa-edit"></i>Edit</button>
+                    <button class="btn" onclick="deleteProperty('${property.id}')"><i class="fas fa-trash-alt"></i>Delete</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+
+function showImageGallery(imageUrls) {
+    const modalContent = document.getElementById('imageGalleryContent');
+    modalContent.innerHTML = ''; // Clear previous images
+
+    imageUrls.forEach((imageUrl, index) => {
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.alt = 'Property Image';
+        img.classList.add('hidden');
+        modalContent.appendChild(img);
+
+        // Delay displaying each image
+        setTimeout(() => {
+            img.classList.remove('hidden');
+        }, index * 100);
+    });
+
+    const modal = document.getElementById('imagePreviewModal');
+    modal.style.display = 'block';
+}
+
+
+
+// Close image gallery modal when clicking outside the modal
+window.onclick = function (event) {
+    const modal = document.getElementById('imageGalleryModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
 }
 
 async function editProperty(id) {
     const url = `${API_URL}/${id}`;
     const token = localStorage.getItem('token'); // Get JWT token from localStorage
-
     try {
         const response = await fetch(url, {
             headers: {
                 'Authorization': `Bearer ${token}`, // Include JWT token in headers
             },
         });
-
         if (!response.ok) {
             throw new Error('Failed to fetch property details');
         }
-
         const property = await response.json();
-
         if (property) {
             // Populate form fields with property details
             document.getElementById('propertyId').value = property.id;
@@ -942,7 +1006,6 @@ async function editProperty(id) {
             document.getElementById('period').value = property.period || '';
             document.getElementById('bedrooms').value = property.bedrooms || '';
             document.getElementById('bathrooms').value = property.bathrooms || '';
-
             document.getElementById('propertyForm').style.display = 'block';
         } else {
             throw new Error('Property details not found');
@@ -953,10 +1016,8 @@ async function editProperty(id) {
     }
 }
 
-
 async function deleteProperty(id) {
     const token = localStorage.getItem('token'); // Get JWT token from localStorage
-
     try {
         const response = await fetch(`${API_URL}/${id}`, {
             method: 'DELETE',
@@ -964,7 +1025,6 @@ async function deleteProperty(id) {
                 'Authorization': `Bearer ${token}`, // Include JWT token in headers
             },
         });
-
         if (response.ok) {
             alert('Property deleted successfully!');
             fetchProperties();
@@ -977,16 +1037,11 @@ async function deleteProperty(id) {
     }
 }
 
-
-
 function handleLocationInput() {
     const input = this.value.toLowerCase();
     const dropdown = document.getElementById('locationDropdown');
-
     dropdown.innerHTML = '';
-
     const filteredLocations = locations.filter(location => location.town.toLowerCase().includes(input));
-
     filteredLocations.forEach(location => {
         const option = document.createElement('div');
         option.textContent = location.town;
@@ -997,7 +1052,6 @@ function handleLocationInput() {
         });
         dropdown.appendChild(option);
     });
-
     if (filteredLocations.length > 0) {
         dropdown.style.display = 'block';
     } else {
@@ -1005,16 +1059,7 @@ function handleLocationInput() {
     }
 }
 
-function previewImage(imageUrl) {
+function closeModal() {
     const modal = document.getElementById('imagePreviewModal');
-    const modalImg = document.getElementById('modalImage');
-    modal.style.display = 'block';
-    modalImg.src = imageUrl;
-}
-
-window.onclick = function (event) {
-    const modal = document.getElementById('imagePreviewModal');
-    if (event.target == modal) {
-        modal.style.display = 'none';
-    }
+    modal.style.display = 'none';
 }

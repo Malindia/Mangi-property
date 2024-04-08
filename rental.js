@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
     const API_URL = "https://mangi-properties-backend.onrender.com/properties";
-    // const API_URL = "http://192.168.100.3:3000/properties";
     const urlParams = new URLSearchParams(window.location.search);
     const locationParam = urlParams.get('location');
 
@@ -40,10 +39,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 propertyItem.classList.add('property-item');
 
                 const propertyImage = document.createElement('img');
-                propertyImage.src = property.imageUrl;
+                propertyImage.src = property.imageUrls[0]; // Use the first image for the property
                 propertyImage.alt = property.name;
 
-                const propertyTitle = document.createElement('h2');
+                const propertyTitle = document.createElement('h3');
                 propertyTitle.textContent = property.name;
 
                 const propertyDescription = document.createElement('p');
@@ -58,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Determine which section to append the property to based on its type
                 if (property.propertyType === 'Rent' || property.propertyType === 'Airbnb') {
-                    if (property.period === 'Per Month') {
+                    if (property.period === 'Per Month' || property.period === 'Per Year') {
                         longTermRentalsSection.querySelector('.property-list').appendChild(propertyItem);
                     } else {
                         shortTermRentalsSection.querySelector('.property-list').appendChild(propertyItem);
@@ -69,21 +68,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // Add click event listener to show property details in modal
                 propertyItem.addEventListener('click', function () {
-                    const modalContent = document.getElementById('propertyModal');
-                    modalContent.querySelector('.modal-images').innerHTML = `<img src="${property.imageUrl}" alt="${property.name}" style="width: 100%; height: auto;">`;
-                    modalContent.querySelector('.modal-title').textContent = property.name;
-                    modalContent.querySelector('.modal-description').textContent = `${property.description}`;
-                    modalContent.querySelector('.modal-type').textContent = `Type: ${property.propertyType}`;
-                    modalContent.querySelector('.modal-bedrooms').textContent = `🛏 Bedrooms: ${property.bedrooms}`;
-                    modalContent.querySelector('.modal-bathrooms').textContent = `🛁 Bathrooms: ${property.bathrooms}`;
-                    modalContent.querySelector('.modal-price').textContent = `Price: Ksh ${formattedPrice} - ${property.period}`;
-
-                    // Show the modal
-                    modalContent.style.display = 'block';
+                    displayPropertyDetails(property);
                 });
             });
         })
         .catch(error => console.error('Error fetching properties:', error));
+
+    // Function to display property details in modal
+    function displayPropertyDetails(property) {
+        const modalContent = document.getElementById('propertyModal');
+
+        // Display image slideshow
+        displayPropertySlideshow(property.imageUrls, modalContent.querySelector('.modal-images'));
+
+        // Display other property details
+        modalContent.querySelector('.modal-title').textContent = property.name;
+        modalContent.querySelector('.modal-description').textContent = property.description;
+        modalContent.querySelector('.modal-type').textContent = `Type: ${property.propertyType}`;
+        modalContent.querySelector('.modal-bedrooms').textContent = `🛏 Bedrooms: ${property.bedrooms}`;
+        modalContent.querySelector('.modal-bathrooms').textContent = `🛁 Bathrooms: ${property.bathrooms}`;
+        modalContent.querySelector('.modal-price').textContent = `Price: Ksh ${property.price} - ${property.period}`;
+
+        // Show the modal
+        modalContent.style.display = 'block';
+    }
+
+    // Function to display image slideshow
+    function displayPropertySlideshow(imageUrls, slideshowContainer) {
+        slideshowContainer.innerHTML = ''; // Clear existing slideshow content
+
+        imageUrls.forEach(imageUrl => {
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = 'Property Image';
+            slideshowContainer.appendChild(img);
+        });
+    }
 
     // Close the modal when the user clicks on <span> (x)
     document.querySelector('.close-button').addEventListener('click', function () {

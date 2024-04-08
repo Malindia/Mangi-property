@@ -18,71 +18,87 @@
           <i class="fas fa-plus"></i> Add Property
         </button>
       </header>
-      <div id="propertyForm" class="modal">
-        <form id="propertyFormInner" class="form" enctype="multipart/form-data">
-          <input type="hidden" id="propertyId" name="propertyId" />
-          <div class="form-group">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required />
-          </div>
-          <div class="form-group">
-            <label for="location">Location:</label>
-            <input type="text" id="location" name="location" required />
-            <div id="locationDropdown" class="dropdown-content"></div>
-          </div>
-          <div class="form-group">
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" required></textarea>
-          </div>
-          <div class="form-group">
-            <label for="image">Image:</label>
-            <input type="file" id="image" name="image" />
-          </div>
-          <div class="form-group">
-            <label for="price">Price:</label>
-            <input type="number" id="price" name="price" required />
-          </div>
-          <div class="form-group">
-            <label for="propertyType">Type:</label>
-            <select id="propertyType" name="propertyType" required>
-              <option value="Rent">Rent</option>
-              <option value="Lease">Lease</option>
-              <option value="Sale">Sale</option>
-              <option value="Airbnb">Airbnb</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="period">Period:</label>
-            <select id="period" name="period" required>
-              <option value="Per Night">Per Night</option>
-              <option value="Per Month">Per Month</option>
-              <option value="Sale">Sale</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="bedrooms">Bedrooms:</label>
-            <input type="number" id="bedrooms" name="bedrooms" required />
-          </div>
-          <div class="form-group">
-            <label for="bathrooms">Bathrooms:</label>
-            <input type="number" id="bathrooms" name="bathrooms" required />
-          </div>
-          <div class="form-group image-preview" id="imagePreviewContainer">
-            <img
-              id="imagePreview"
-              src=""
-              alt="Preview"
-              style="max-width: 100%; height: auto; display: none"
-            />
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="btn">Submit</button>
-            <button type="button" class="btn btn-cancel" onclick="closeForm()">
-              Cancel
-            </button>
-          </div>
-        </form>
+      <div class="form-container">
+        <div id="propertyForm" class="modal">
+          <form
+            id="propertyFormInner"
+            class="form"
+            enctype="multipart/form-data"
+          >
+            <input type="hidden" id="propertyId" name="propertyId" />
+            <div class="form-group">
+              <label for="name">Name:</label>
+              <input type="text" id="name" name="name" required />
+            </div>
+            <div class="form-group">
+              <label for="location">Location:</label>
+              <input type="text" id="location" name="location" required />
+              <div id="locationDropdown" class="dropdown-content"></div>
+            </div>
+            <div class="form-group">
+              <label for="description">Description:</label>
+              <textarea id="description" name="description" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="images">Images (up to 5):</label>
+              <input
+                type="file"
+                id="images"
+                name="images[]"
+                accept="image/*"
+                multiple
+              />
+            </div>
+            <div class="form-group">
+              <label for="price">Price:</label>
+              <input type="number" id="price" name="price" required />
+            </div>
+            <div class="form-group">
+              <label for="propertyType">Type:</label>
+              <select id="propertyType" name="propertyType" required>
+                <option value="Rent">Rent</option>
+                <option value="Lease">Lease</option>
+                <option value="Sale">Sale</option>
+                <option value="Airbnb">Airbnb</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="period">Period:</label>
+              <select id="period" name="period" required>
+                <option value="Per Night">Per Night</option>
+                <option value="Per Month">Per Month</option>
+                <option value="Sale">Sale</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="bedrooms">Bedrooms:</label>
+              <input type="number" id="bedrooms" name="bedrooms" required />
+            </div>
+            <div class="form-group">
+              <label for="bathrooms">Bathrooms:</label>
+              <input type="number" id="bathrooms" name="bathrooms" required />
+            </div>
+            <div class="form-group image-preview" id="imagePreviewContainer">
+              <img
+                id="imagePreview"
+                src=""
+                alt="Preview"
+                style="max-width: 100%; height: auto; display: none"
+              />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn">Submit</button>
+              <button
+                type="button"
+                class="btn btn-cancel"
+                onclick="closeForm()"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
       <div class="table-container">
         <table id="propertiesTable">
@@ -105,13 +121,9 @@
       </div>
     </div>
     <div id="imagePreviewModal" class="modal" onclick="closeModal()">
-      <img
-        id="modalImage"
-        src=""
-        alt="Preview"
-        style="max-width: 100%; height: auto"
-      />
+      <div id="imageGalleryContent" class="image-gallery-content"></div>
     </div>
+
     <div id="otpForm" class="modal" style="display: none">
       <form
         id="otpFormInner"
