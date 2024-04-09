@@ -15,7 +15,7 @@
 .property-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content:flex-start;
     /* Center items horizontally */
     margin: 0 -10px;
     /* Adjust margin to handle spacing between items */
