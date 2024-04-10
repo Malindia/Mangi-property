@@ -1,9 +1,7 @@
 /* Property Section */
 .property-section {
     margin: 40px auto;
-    /* Center the property section */
     max-width: 1200px;
-    /* Limit maximum width */
     text-align: center;
 }
 
@@ -15,15 +13,12 @@
 .property-list {
     display: flex;
     flex-wrap: wrap;
-    /* justify-content:flex-start; */
-    /* Center items horizontally */
-    /* margin: 0 -10px; */
-    /* Adjust margin to handle spacing between items */
+    justify-content: flex-start;
+    /* Align items from left to right */
 }
 
 .property-item {
     flex: 0 1 calc(25% - 20px);
-    /* Adjust width for responsive layout */
     background-color: #f9f9f9;
     border-radius: 12px;
     overflow: hidden;
@@ -32,7 +27,6 @@
     cursor: pointer;
     margin-bottom: 20px;
     margin: 0 10px;
-    /* Add margin to create space between items */
 }
 
 .property-item:hover {
@@ -67,14 +61,12 @@
 @media (max-width: 768px) {
     .property-item {
         flex-basis: calc(50% - 20px);
-        /* Adjust width for smaller screens */
     }
 }
 
 @media (max-width: 480px) {
     .property-item {
         flex-basis: calc(100% - 20px);
-        /* Adjust width for even smaller screens */
     }
 }
 /* Modal Styles */
@@ -97,9 +89,9 @@
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     max-width: 800px;
-    max-height: 800px;
     width: 90%;
-    height: 80%;
+    max-height: 80%;
+    overflow-y: auto;
 }
 
 .close-button {
@@ -117,18 +109,26 @@
 }
 
 .modal-images {
-    display: flex;
-    justify-content: center;
     overflow-x: auto;
+    /* Enable horizontal scrolling */
+    white-space: nowrap;
+    /* Prevent wrapping of images */
+    margin-left: -10px;
+    /* Adjust for potential scrollbar */
+    margin-right: -10px;
+    /* Adjust for potential scrollbar */
 }
 
 .modal-images img {
-    width: 400px;
-    height: 300px;
-    margin-right: 10px;
+    max-height: 350px;
+    object-fit: cover;
+    /* Prevent image stretching */
     border-radius: 12px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-right: 10px;
+    /* Add space between images */
 }
+
 .modal-title {
     font-size: 24px;
     font-weight: bold;
@@ -155,4 +155,12 @@
     color: #333;
     font-weight: bold;
     margin-top: 20px;
+}
+
+/* Media query for small devices */
+@media screen and (max-width: 768px) {
+    .modal-images img {
+        max-height: 250px;
+        /* Reduce max height for smaller screens */
+    }
 }
