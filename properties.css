@@ -183,3 +183,11 @@ td {
         max-width: none;
     }
 }
+footer {
+    background-color: #253d2e;
+    color: #fff;
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+}
